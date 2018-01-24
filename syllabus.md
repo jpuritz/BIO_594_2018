@@ -1,6 +1,6 @@
-# Using genomic techniques to examine the evolution of populations
+# Using genomic techniques to examine the evolution of populations  
 ### BIO 594-004 (3 Credits)
-
+---
 ## Instructor: Dr. Jon Puritz, Biological Sciences
 ### Office: CBLS 183
 ### Office hours: Tu, Thu 10:00 am to 11:00 am
