@@ -3,7 +3,7 @@
 ## Goals
 * Go over the syllabus
 * Setup an RSA key for sshing into the class server
-* Clone the class git repository to both your server account and your laptop
+* Clone the class git repository to both your server account
 * Test out terminal functionality in RStudio
 
 
@@ -91,5 +91,62 @@ I reccomend following the steps in this [LINK](https://docs.joyent.com/public-cl
 * Then, enter `nano authorized_keys`
 * Copy the contents into the window
 * Hit CTL+X to exit and save.  Press Y to confirm. Then hit enter.
+
+## Using git to clone class repository
+
+If you haven't signed up for a [github](https://github.com) account, please do so now.  Once you have a username and email address associated with you account. Log onto the class server-
+
+Run this command:
+`git config --global user.email "you@example.com"`
+then
+`git config --global user.name "Your Name"`
+
+Next make a directory called `repos`
+`mkdir ~/repos`
+
+Change into that directory: `cd repos`
+
+Now, you can clone (copy) the whole repository: `git clone https://github.com/jpuritz/BIO_594_2018.git`
+
+You should have a directory called `BIO_594_2018` that will have all the current class materials.
+We'll get into this more next week, but you can always update this repo with these two commands:
+```
+cd ~/repos/BIO_594_2018
+git pull
+```
+
+### I also highly recommend cloning the class repository to your own laptop for reference.  
+All class materials and exercises will be posted to the repository, so it will be useful to have access to it in multiple places.
+
+I find it easiest to manage local repositories with the [Desktop Client](https://desktop.github.com)
+
+## Other handy software 
+
+### Text Editor
+A good text editor can make a huge difference in Bioinformatics.  There are built editors (nano) on the class server that we will explore, but having one on your laptop will be useful.  Below are a few examples:
+
+#### OS X
+* [Text Wrangler](http://www.barebones.com/products/textwrangler/)
+
+#### Windows
+* [Notepad++](http://notepad-plus-plus.org/)
+
+#### Linux
+* [Gedit](https://wiki.gnome.org/Apps/Gedit)
+
+#### Cross-Platform
+* [Sublime Text](http://www.sublimetext.com/)
+
+### Markdown Editor
+All work in this class will be documented on the github repository which uses markdown formatting.  You can certainly work with a basic text editor to do this or using the web interface, but a stand alone app helps as well.
+
+#### OS X
+* [Quiver](http://happenapps.com)
+
+#### Windows
+* [MarkdownPad](http://markdownpad.com/)
+
+#### Cross-Platform
+* [Haroopad](http://pad.haroopress.com/)
 
 
