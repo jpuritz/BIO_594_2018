@@ -6,4 +6,3 @@ Here you will find all relevant course materials including:
 * [Readings](/Readings)
 * [Syllabus](/syllabus.md)
 * Exercises
-* Assignments
