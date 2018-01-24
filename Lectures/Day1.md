@@ -20,6 +20,14 @@ First, check to make sure you don't already have one
 
 Make sure that there is nothing that looks like: `id_rsa` or `id_rsa.pub`
 
+##### If you do already have one
+* Run the command `cat ~/.ssh/id_rsa.pub` and copy the contents.  
+* Once the key is copied, log into the server using your password and navigate to: `~/.ssh`
+* Then, enter `nano authorized_keys`
+* Copy the contents into the window
+* Hit CTL+X to exit and save.  Press Y to confirm. Then hit enter.
+
+##### If you do NOT already have one
 If there is not, then generate a new key:
 
 `ssh-keygen -t rsa`
@@ -149,4 +157,11 @@ All work in this class will be documented on the github repository which uses ma
 #### Cross-Platform
 * [Haroopad](http://pad.haroopress.com/)
 
+## Rstudio
+Class demo
 
+
+## Further Reading (Highly Recommended)
+* [Github Guide](https://guides.github.com/activities/hello-world/)
+* [Markdown Guide](https://help.github.com/articles/getting-started-with-writing-and-formatting-on-github/)
+* [Markdown Cheatsheet](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet)
