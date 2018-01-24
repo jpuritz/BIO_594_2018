@@ -3,7 +3,7 @@
 Here you will find all relevant course materials including:
 
 * Lectures
-* Readings
+* [Readings](/Readings)
 * Syllabus
 * Exercises
 * Assignments
