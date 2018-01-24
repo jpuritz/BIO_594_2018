@@ -2,7 +2,7 @@
 
 Here you will find all relevant course materials including:
 
-* Lectures
+* [Lectures](/Lectures)
 * [Readings](/Readings)
 * [Syllabus](/syllabus.md)
 * Exercises
