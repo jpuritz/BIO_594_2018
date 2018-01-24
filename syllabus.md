@@ -1,16 +1,15 @@
-# Using genomic techniques to examine the evolution of populations  
-### BIO 594-004 (3 Credits)
----
+# BIO 594-004: Using genomic techniques to examine the evolution of populations  
+
 ## Instructor: Dr. Jon Puritz, Biological Sciences
-### Office: CBLS 183
-### Office hours: Tu, Thu 10:00 am to 11:00 am
+#### Office: CBLS 183
+#### Office hours: Tu, Thu 10:00 am to 11:00 am
 Feel free to come by during this time without an appointment, otherwise schedule a time with me via email
-### Email: jpuritz@uri.edu  Phone: 401-874-902
+#### Email: jpuritz@uri.edu  Phone: 401-874-902
 *I will do my best to respond promptly during business hours (M-F: 9-5)*
 
-## Meeting Time and Location
-### Spring 2018- Wednesdays 1:00 pm to 3:50 pm
-### Woodward 312
+## Meeting Time and Location for Spring 2018
+#### Wednesdays 1:00 pm to 3:50 pm
+#### Woodward 312
 
 ## Course Description
 The advent of next-generation sequencing (NGS) has rapidly transcended population genetics to population genomics. Sequencer outputs have expanded from kilobases to gigabases while becoming over 30,000 times less expensive. This allows population levels studies to use thousands of genetic markers across the entire genome, and to survey both neutral and adaptive loci. In this class, we will cover a variety of techniques including: restriction-site associated sequencing (RADseq), RNA sequencing and transcriptomics, exome capture, low-coverage whole genome sequencing, pooled sequencing, and methods designed to examine patterns of methylation across genomes.
