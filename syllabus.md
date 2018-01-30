@@ -2,7 +2,7 @@
 
 ## Instructor: Dr. Jon Puritz, Biological Sciences
 #### Office: CBLS 183
-#### Office hours: Tu, Thu 10:00 am to 11:00 am
+#### Office hours: Wed, Thu 10:00 am to 11:00 am
 Feel free to come by during this time without an appointment, otherwise schedule a time with me via email
 #### Email: jpuritz@uri.edu  Phone: 401-874-902
 *I will do my best to respond promptly during business hours (M-F: 9-5)*
