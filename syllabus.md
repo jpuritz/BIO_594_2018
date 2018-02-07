@@ -38,9 +38,9 @@ Updated 1/24/2018 and still subject to change
 |-----|------|----|
 |1/24/18| Course Intro and Computer Setup and Testing| None|
 |1/31/18| Unix Command Line| https://www.codecademy.com/learn/learn-the-command-line; https://devhints.io/bash
-|2/7/18|  Intro to Population Genomics|Allendorf *et al.* 2010; Jones & Good 2015; Matz 2017|
-|      | NGS Data Structures- Visualization and Manipulation||
+|2/7/18 | NGS Data Structures- Visualization and Manipulation||
 |2/14/18| RADseq: *De novo* assembly and read mapping||
+|       |  Intro to Population Genomics|Allendorf *et al.* 2010; Jones & Good 2015; Matz 2017|
 |2/21/18| RADseq: SNP Calling and Filtering||
 |2/28/18| Detecting Loci Under Selection||
 |3/7/18| Analyzing Population Structure||
