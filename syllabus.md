@@ -41,7 +41,7 @@ Updated 2/21/2018 and still subject to change
 |2/7/18 | NGS Data Structures- Visualization and Manipulation|[Web Links](/Readings/Week%03%0(2:7:2018)/Readings.md)|
 |2/14/18| RADseq: *De novo* assembly and read mapping|[Davey et al. 2010](https://github.com/jpuritz/BIO_594_2018/blob/master/Readings/Week%204%20(2:14:2018)/Davey%20et%20al.%20-%202010%20-%20RADSeq%20next-generation%20population%20genetics.pdf), [2013](https://github.com/jpuritz/BIO_594_2018/blob/master/Readings/Week%204%20(2:14:2018)/Davey%20et%20al._2013_Special%20features%20of%20RAD%20Sequencing%20data%20implications%20for%20genotyping.pdf); [Flanagan et al. 2017](https://github.com/jpuritz/BIO_594_2018/blob/master/Readings/Week%204%20(2:14:2018)/Flanagan_et_al-2017-Molecular_Ecology_Resources.pdf); [Puritz et al. 2014](https://github.com/jpuritz/BIO_594_2018/blob/master/Readings/Week%204%20(2:14:2018)/Puritz%20et%20al._2014_Demystifying%20the%20RAD%20fad.pdf)|
 |2/21/18| RADseq: SNP Calling and Filtering|[Hodel et al. 2017](https://github.com/jpuritz/BIO_594_2018/blob/master/Readings/Week%205%20(2:21:2018)/Hodel%202017.pdf); [O'Leary et al. Submitted](https://github.com/jpuritz/BIO_594_2018/blob/master/Readings/Week%205%20(2:21:2018)/O'leary%20et%20al.%20Submitted.pdf); [Shafer et al. 2016](https://github.com/jpuritz/BIO_594_2018/blob/master/Readings/Week%205%20(2:21:2018)/Shafer_et_al-2016-Methods_in_Ecology_and_Evolution.pdf)|
-|2/28/18| Detecting Loci Under Selection||
+|2/28/18| Detecting Loci Under Selection|[Primary Literature](https://github.com/jpuritz/BIO_594_2018/tree/master/Readings/Week%206%20(2:28:2018))|
 |3/7/18| Analyzing Population Structure||
 |3/14/18| SPRING BREAK!!! No class|No Readings|
 |3/21/18| Exome Capture and Other Capture Methods ||
