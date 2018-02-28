@@ -6,7 +6,7 @@
 
 Below I run the command from step 33 of Ref.Ex
 
-`bash ReferenceOpt.sh 4 8 4 8 PE 80`
+`bash ReferenceOpt.sh 4 8 4 8 PE 16`
 
 Here is the output:
 ```bash
