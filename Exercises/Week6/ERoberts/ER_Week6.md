@@ -297,11 +297,14 @@ X	Contig number
 18	999
 The top three most common number of contigs (with values rounded)
 X	Contig number
-250	1000.0```
+250	1000.0
+
+```
 
 Finally, I viewed the output of kopt.data
 
-```$ cat kopt.data
+```
+$ cat kopt.data
 4 4 0.80 1000
 4 4 0.82 1000
 4 4 0.84 1000
@@ -551,7 +554,9 @@ Finally, I viewed the output of kopt.data
 8 8 0.92 989
 8 8 0.94 989
 8 8 0.96 989
-8 8 0.98 990```
+8 8 0.98 990
+
+```
 
 
 
