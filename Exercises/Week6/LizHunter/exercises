@@ -1,5 +1,7 @@
+#Ref.Ex Step 33 Command
 bash ReferenceOpt.sh 4 8 4 8 PE 16
 
+#Terminal Output
 K1 is 7 K2 is 6 c is 0.86
 K1 is 7 K2 is 6 c is 0.88
 K1 is 7 K2 is 6 c is 0.9
@@ -118,7 +120,7 @@ The top three most common number of contigs (with values rounded)
 X	Contig number
 179	1000
 
-kopt.results output
+#kopt.results output
 4 4 0.80
 4 4 0.82
 4 4 0.84
