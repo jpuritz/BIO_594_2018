@@ -1,6 +1,9 @@
+##
 #Week 6 Assignment
 ###Name: Erin Roberts
 ###Date: March 7th, 2018
+
+syntax "markdown" "\.(md|mdt|mdwn)$"
 
 First, I ran the following code from Step 33 of Ref.Ex
 
