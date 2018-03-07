@@ -1,9 +1,6 @@
-##
-#Week 6 Assignment
-###Name: Erin Roberts
-###Date: March 7th, 2018
-
-syntax "markdown" "\.(md|mdt|mdwn)$"
+# Week 6 Assignment
+### Name: Erin Roberts
+### Date: March 7th, 2018
 
 First, I ran the following code from Step 33 of Ref.Ex
 
@@ -15,7 +12,7 @@ Next, I disowned the process using
 
 This produced the following output:
 
-`
+```
 K1 is 4 K2 is 4 c is 0.9
 K1 is 4 K2 is 4 c is 0.92
 K1 is 4 K2 is 4 c is 0.94
@@ -300,11 +297,11 @@ X	Contig number
 18	999
 The top three most common number of contigs (with values rounded)
 X	Contig number
-250	1000.0`
+250	1000.0```
 
 Finally, I viewed the output of kopt.data
 
-`$ cat kopt.data
+```$ cat kopt.data
 4 4 0.80 1000
 4 4 0.82 1000
 4 4 0.84 1000
@@ -554,7 +551,7 @@ Finally, I viewed the output of kopt.data
 8 8 0.92 989
 8 8 0.94 989
 8 8 0.96 989
-8 8 0.98 990`
+8 8 0.98 990```
 
 
 
