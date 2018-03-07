@@ -1,6 +1,6 @@
 # Name :Evelyn Takyi
 
-## Date: 03/06/2018
+## Date: 03/07/2018
 ### Week6
 
 `The bash script : bash ReferenceOpt.sh 4 8 4 8 PE 16 &`
