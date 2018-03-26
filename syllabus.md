@@ -41,17 +41,17 @@ Updated 2/21/2018 and still subject to change
 |2/7/18 | NGS Data Structures- Visualization and Manipulation|[Web Links](/Readings/Week%03%0(2:7:2018)/Readings.md)|
 |2/14/18| RADseq: *De novo* assembly and read mapping|[Davey et al. 2010](https://github.com/jpuritz/BIO_594_2018/blob/master/Readings/Week%204%20(2:14:2018)/Davey%20et%20al.%20-%202010%20-%20RADSeq%20next-generation%20population%20genetics.pdf), [2013](https://github.com/jpuritz/BIO_594_2018/blob/master/Readings/Week%204%20(2:14:2018)/Davey%20et%20al._2013_Special%20features%20of%20RAD%20Sequencing%20data%20implications%20for%20genotyping.pdf); [Flanagan et al. 2017](https://github.com/jpuritz/BIO_594_2018/blob/master/Readings/Week%204%20(2:14:2018)/Flanagan_et_al-2017-Molecular_Ecology_Resources.pdf); [Puritz et al. 2014](https://github.com/jpuritz/BIO_594_2018/blob/master/Readings/Week%204%20(2:14:2018)/Puritz%20et%20al._2014_Demystifying%20the%20RAD%20fad.pdf)|
 |2/21/18| RADseq: SNP Calling and Filtering|[Hodel et al. 2017](https://github.com/jpuritz/BIO_594_2018/blob/master/Readings/Week%205%20(2:21:2018)/Hodel%202017.pdf); [O'Leary et al. Submitted](https://github.com/jpuritz/BIO_594_2018/blob/master/Readings/Week%205%20(2:21:2018)/O'leary%20et%20al.%20Submitted.pdf); [Shafer et al. 2016](https://github.com/jpuritz/BIO_594_2018/blob/master/Readings/Week%205%20(2:21:2018)/Shafer_et_al-2016-Methods_in_Ecology_and_Evolution.pdf)|
-|2/28/18| Detecting Loci Under Selection|[Primary Literature](https://github.com/jpuritz/BIO_594_2018/tree/master/Readings/Week%206%20(2:28:2018))|
-|3/7/18| Analyzing Population Structure||
+2/28/18| Class Cancelled||
+|3/7/18| Detecting Loci Under Selection|[Primary Literature](https://github.com/jpuritz/BIO_594_2018/tree/master/Readings/Week%206%20(2:28:2018))|
 |3/14/18| SPRING BREAK!!! No class|No Readings|
-|3/21/18| Exome Capture and Other Capture Methods ||
-|       |  Intro to Population Genomics|[Allendorf *et al.* 2010](https://github.com/jpuritz/BIO_594_2018/blob/master/Readings/Week%202%20(1:31:2018)/Allendorf%2C%20Hohenlohe%2C%20Luikart_2010_Genomics%20and%20the%20future%20of%20conservation%20genetics.pdf); [Jones & Good 2015](https://github.com/jpuritz/BIO_594_2018/blob/master/Readings/Week%202%20(1:31:2018)/Jones%2C%20Good_2015_Targeted%20capture%20in%20evolutionary%20and%20ecological%20genomics(2).pdf); [Matz 2017](https://github.com/jpuritz/BIO_594_2018/blob/master/Readings/Week%202%20(1:31:2018)/Matz_2017_Fantastic%20Beasts%20and%20How%20To%20Sequence%20Them%20Ecological%20Genomics%20for%20Obscure%20Model%20Organisms.pdf)|
-|3/28/18| RNAseq ||
-|4/4/18| Pool-seq and Low Coverage Whole Genome Sequencing
-|4/11/18| Epigenetics and Methylation| Project Plans Due!
+|3/21/18| Class Cancelled||
+|3/28/18| Analyzing Population Structure||
+|4/04/18| RNAseq ||
+|       | Population Genomic Methods|[Allendorf *et al.* 2010](https://github.com/jpuritz/BIO_594_2018/blob/master/Readings/Week%202%20(1:31:2018)/Allendorf%2C%20Hohenlohe%2C%20Luikart_2010_Genomics%20and%20the%20future%20of%20conservation%20genetics.pdf); [Jones & Good 2015](https://github.com/jpuritz/BIO_594_2018/blob/master/Readings/Week%202%20(1:31:2018)/Jones%2C%20Good_2015_Targeted%20capture%20in%20evolutionary%20and%20ecological%20genomics(2).pdf); [Matz 2017](https://github.com/jpuritz/BIO_594_2018/blob/master/Readings/Week%202%20(1:31:2018)/Matz_2017_Fantastic%20Beasts%20and%20How%20To%20Sequence%20Them%20Ecological%20Genomics%20for%20Obscure%20Model%20Organisms.pdf)|
+|4/11/18| Exome Capture and Other Capture Methods, Pool-seq, and Low Coverage Whole Genome Sequencing |Project Plans Due!|
 |4/18/18| Final Projects | No Readings|
 |4/25/18| Final Projects | No Readings|
-
+|5/02/18| Epigenetics and Methylation|| 
 ## Grading
 
 ### Class Participation (50%)
