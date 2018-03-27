@@ -347,3 +347,47 @@ alpha <- 0.1
 outliers <- which(qval < alpha)
 ```
 
+## R code for running Outflank
+
+```
+R
+```
+
+```R
+library(OutFLANK)  # outflank package
+library(vcfR)
+library(bigsnpr)   # package for LD pruning
+
+my_vcf <- read.vcfR("SNP.TRSdp5p05FHWE2A.recode.vcf")
+
+geno <- extract.gt(my_vcf) # Character matrix containing the genotypes
+position <- getPOS(my_vcf) # Positions in bp
+chromosome <- getCHROM(my_vcf) # Chromosome information
+
+G <- matrix(NA, nrow = nrow(geno), ncol = ncol(geno))
+
+G[geno %in% c("0/0", "0|0")] <- 0
+G[geno  %in% c("0/1", "1/0", "1|0", "0|1")] <- 1
+G[geno %in% c("1/1", "1|1")] <- 2
+
+G[is.na(G)] <- 9
+
+head(G[,1:10])
+
+pop <- read.csv("indv", header=FALSE)
+pop <- pop$V1
+
+
+my_fst <- MakeDiploidFSTMat(t(G), locusNames = paste0(chromosome,"_", position), popNames = pop)
+
+my_dist <- OutFLANK(my_fst, NumberOfSamples = 4, qthreshold=0.1, RightTrimFraction=0.1, LeftTrimFraction=0.1)
+
+
+OutFLANKResultsPlotter(my_dist)
+
+plot(my_dist$results$FST, col=as.numeric(as.factor(chromosome)))
+
+
+my_dist$results[which(my_dist$results$OutlierFlag == TRUE),]
+```
+
