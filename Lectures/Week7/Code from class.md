@@ -1,4 +1,4 @@
-# Bioinformatic Filtering Code for Week7
+# Code from Week7
 
 create environment
 
