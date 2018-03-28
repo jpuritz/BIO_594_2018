@@ -1,3 +1,4 @@
+```R
 library(adegenet)
 library(vcfR)
 
@@ -21,3 +22,4 @@ X <- tab(my_genind, freq = TRUE, NA.method = "mean")
 pca1 <- dudi.pca(X, scale = FALSE, scannf = FALSE, nf = 3)
 col <- funky(15) 
 s.class(pca1$li, pop(my_genind),xax=1,yax=2, col=col, axesell=FALSE, cstar=0, cpoint=3, grid=FALSE)
+```
