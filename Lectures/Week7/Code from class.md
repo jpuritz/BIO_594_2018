@@ -4,6 +4,7 @@ create environment
 
 `conda create -n week7 ddocent`
 
+## Calling SNPs
 Create working directory and link to the data
 
 ```bash
@@ -48,6 +49,7 @@ Use `5` for K1 and `3` for K2 during assembly
 
 When finished, start filtering SNPs.  **I won't comment this code as it is all review**
 
+## SNP Filtering
 ```
 mkdir Filter
 cd Filter/
@@ -237,8 +239,11 @@ read input file done.                                                           
 write output file...                                                                                      │
 write output file done.
 ```
+## Outlier Detection
 
-## Run BayeScan
+### Run BayeScan
+
+To learn more about BayeScan [LINK](http://cmpg.unibe.ch/software/BayeScan/)
 ```
 BayeScan2.1_linux64bits SNP.TRSdp5p05FHWEBS -nbp 30 -thin 20
 ```
@@ -266,7 +271,7 @@ vcftools --vcf SNP.TRSdp5p05FHWEmaf05.recode.vcf --max-alleles 2 --recode --reco
 
 ## PCAdapt
 
-This program runs entirely in R
+This program runs entirely in R and has excellent [documentation](https://bcm-uga.github.io/pcadapt/)
 
 Start R
 
@@ -348,6 +353,7 @@ outliers <- which(qval < alpha)
 ```
 
 ## R code for running Outflank
+See documentation [here](https://github.com/whitlock/OutFLANK)
 
 ```
 R
@@ -391,3 +397,62 @@ plot(my_dist$results$FST, col=as.numeric(as.factor(chromosome)))
 my_dist$results[which(my_dist$results$OutlierFlag == TRUE),]
 ```
 
+## BayEnv2
+
+[Documentation](https://bitbucket.org/tguenther/bayenv2_public/src)
+
+First, convert vcf to BayEnv input
+```
+java -jar /usr/local/bin/PGDSpider2-cli.jar -inputfile SNP.TRSdp5p05FHWE2A.recode.vcf -outputfile SNP.TRSdp5p05FHWEBayEnv.txt -spid SNPBayEnv.spid
+```
+
+```
+WARN  22:05:19 - PGDSpider configuration file not found! Loading default configuration.
+initialize convert process...
+read input file...
+read input file done.
+write output file...
+write output file done.
+```
+
+Run BayEnv to generate the covariance matrix
+
+`bayenv2 -i SNP.TRSdp5p05FHWEBayEnv.txt -p 4 -k 100000 -r 63479 > matrix.out`
+
+This code generates 100,000 iterations.  We only need the last one.
+
+`tail -5 matrix.out | head -4 > matrix`
+
+With the matrix we will use our environmental factor file:
+
+`cat environ`
+
+```
+-0.888330138    -0.565300997    0.080757285     1.37287385
+-0.565300997    -0.484543712    -0.565300997    -0.403786427
+```
+
+The environmental file are standardized environmental data with each line representing an environemtal factor with the value for each population tab delimited.  This dummy file has 2 variables for 4 populations
+
+Next, we calculate the Bayes Factor for each SNP for each environmental variable:
+
+```
+calc_bf.sh SNP.TRSdp5p05FHWEBayEnv.txt environ matrix 4 10000 2
+```
+
+Next, we convert the output into something suitable to input into R
+```
+paste <(seq 1 981) <(cut -f2,3 bf_environ.environ ) > bayenv.out
+cat <(echo -e "Locus\tBF1\tBF2") bayenv.out > bayenv.final
+```
+
+Now, open R
+
+`R`
+
+```
+table_bay <- read.table("bayenv.final",header=TRUE)
+plot(table_bay$BF1)
+
+table_bay[which(table_bay$BF1 > 100),]
+```
