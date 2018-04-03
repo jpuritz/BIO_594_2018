@@ -32,7 +32,7 @@ Readings will be selected from web based tutorials, package vignettes, software 
 Students must bring their own laptop (Mac, Windows, or Linux) with the capability of SSHing into a linux server and a working installation of RStudio.  Please contact the instructor if you do not have a laptop available to use and/or requiring one is not a financial possibility
 
 ## Schedule
-Updated 2/21/2018 and still subject to change
+Updated 4/3/2018 and still subject to change
 
 | Date | Topic | Reading Assignment|
 |-----|------|----|
@@ -47,8 +47,8 @@ Updated 2/21/2018 and still subject to change
 |3/21/18| Class Cancelled||
 |3/28/18| Analyzing Population Structure|[Primary Literature](https://github.com/jpuritz/BIO_594_2018/tree/master/Readings/Week%208%20(3:28:2018))|
 |4/04/18| RNAseq ||
-|       | Population Genomic Methods|[Allendorf *et al.* 2010](https://github.com/jpuritz/BIO_594_2018/blob/master/Readings/Week%202%20(1:31:2018)/Allendorf%2C%20Hohenlohe%2C%20Luikart_2010_Genomics%20and%20the%20future%20of%20conservation%20genetics.pdf); [Jones & Good 2015](https://github.com/jpuritz/BIO_594_2018/blob/master/Readings/Week%202%20(1:31:2018)/Jones%2C%20Good_2015_Targeted%20capture%20in%20evolutionary%20and%20ecological%20genomics(2).pdf); [Matz 2017](https://github.com/jpuritz/BIO_594_2018/blob/master/Readings/Week%202%20(1:31:2018)/Matz_2017_Fantastic%20Beasts%20and%20How%20To%20Sequence%20Them%20Ecological%20Genomics%20for%20Obscure%20Model%20Organisms.pdf)|
-|4/11/18| Exome Capture and Other Capture Methods, Pool-seq, and Low Coverage Whole Genome Sequencing |Project Plans Due!|
+|4/11/18| Population Genomic Methods|[Allendorf *et al.* 2010](https://github.com/jpuritz/BIO_594_2018/blob/master/Readings/Week%202%20(1:31:2018)/Allendorf%2C%20Hohenlohe%2C%20Luikart_2010_Genomics%20and%20the%20future%20of%20conservation%20genetics.pdf); [Jones & Good 2015](https://github.com/jpuritz/BIO_594_2018/blob/master/Readings/Week%202%20(1:31:2018)/Jones%2C%20Good_2015_Targeted%20capture%20in%20evolutionary%20and%20ecological%20genomics(2).pdf); [Matz 2017](https://github.com/jpuritz/BIO_594_2018/blob/master/Readings/Week%202%20(1:31:2018)/Matz_2017_Fantastic%20Beasts%20and%20How%20To%20Sequence%20Them%20Ecological%20Genomics%20for%20Obscure%20Model%20Organisms.pdf)|
+|| Exome Capture and Other Capture Methods, Pool-seq, and Low Coverage Whole Genome Sequencing |Project Plans Due!|
 |4/18/18| Final Projects | No Readings|
 |4/25/18| Final Projects | No Readings|
 |5/02/18| Epigenetics and Methylation|| 
