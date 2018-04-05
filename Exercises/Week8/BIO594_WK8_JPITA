@@ -1,0 +1,712 @@
+BIO 594 Week_7and8 Assignment
+Jessica N. Pita Aquino
+
+PART 1: SIMULATED DATA
+
+STEP 1: CALL SNPs
+(1) Make a directory and copy the data from the course's directory
+$ mkdir Week_7and8
+$ cd Week_7and8
+$ cp /home/BIO594/Exercises/Week_7and8/plot_R.r .
+$ cp -r /home/BIO594/Exercises/Week_7and8/realdata/ .
+$ cp -r /home/BIO594/Exercises/Week_7and8/simulated/ .
+
+(2) Create an environment and activate
+$ conda create -n FilterSNPs ddocent
+$ source activate FilterSNPs
+
+(3) Start dDocent
+$ dDocent
+
+Output
+dDocent run started Tue Apr 3 22:58:57 EDT 2018 
+
+80 individuals are detected. Is this correct? Enter yes or no and press [ENTER]
+yes
+
+Proceeding with 80 individuals
+dDocent detects 80 processors available on this system.
+Please enter the maximum number of processors to use for this analysis.
+0
+
+Incorrect. Please enter the number of processing cores on this computer
+80
+
+dDocent detects 503G maximum memory available on this system.
+Please enter the maximum memory to use for this analysis. The size can be postfixed with 
+K, M, G, T, P, k, m, g, t, or p which would multiply the size with 1024, 1048576, 1073741824, 
+1099511627776, 1125899906842624, 1000, 1000000, 1000000000, 1000000000000, or 1000000000000000 respectively.
+For example, to limit dDocent to ten gigabytes, enter 10G or 10g
+0
+
+Do you want to quality trim your reads?
+Type yes or no and press [ENTER]?
+yes
+
+Do you want to perform an assembly?
+Type yes or no and press [ENTER].
+yes
+
+What type of assembly would you like to perform?  Enter SE for single end, PE for paired-end, RPE for paired-end sequencing for RAD protocols with random shearing, or OL for paired-end sequencing that has substantial overlap.
+Then press [ENTER]
+PE
+
+Reads will be assembled with Rainbow
+CD-HIT will cluster reference sequences by similarity. The -c parameter (% similarity to cluster) may need to be changed for your taxa.
+Would you like to enter a new c parameter now? Type yes or no and press [ENTER]
+yes
+
+Please enter new value for c. Enter in decimal form (For 90%, enter 0.9)
+0.9
+
+Do you want to map reads?  Type yes or no and press [ENTER]
+yes
+
+BWA will be used to map reads.  You may need to adjust -A -B and -O parameters for your taxa.
+Would you like to enter a new parameters now? Type yes or no and press [ENTER]
+yes
+
+Please enter new value for A (match score).  It should be an integer.  Default is 1.
+1
+
+Please enter new value for B (mismatch score).  It should be an integer.  Default is 4.
+4
+
+Please enter new value for O (gap penalty).  It should be an integer.  Default is 6.
+6
+
+Do you want to use FreeBayes to call SNPs?  Please type yes or no and press [ENTER]
+yes
+                                                                                                                    
+                      Number of Unique Sequences with More than X Coverage (Counted within individuals)                 
+                                                                                                                        
+  105000 +-+---------+-----------+-----------+-----------+----------+-----------+-----------+-----------+---------+-+   
+         +           +           +           +           +          +           +           +           +           +   
+         *****                                                                                                      |   
+  100000 +-+  *                                                                                                   +-+   
+         |     ******                                                                                               |   
+         |           ******                                                                                         |   
+         |                 ******                                                                                   |   
+   95000 +-+                     ************                                                                     +-+   
+         |                                   ******                                                                 |   
+         |                                         ******                                                           |   
+   90000 +-+                                             ******                                                   +-+   
+         |                                                     *****                                                |   
+         |                                                          ******                                          |   
+   85000 +-+                                                              ******                                  +-+   
+         |                                                                      ******                              |   
+         |                                                                            ******                        |   
+   80000 +-+                                                                                ******                +-+   
+         |                                                                                        ******            |   
+         |                                                                                              ******      |   
+         |                                                                                                    ******|   
+   75000 +-+                                                                                                      +-*   
+         |                                                                                                          |   
+         +           +           +           +           +          +           +           +           +           +   
+   70000 +-+---------+-----------+-----------+-----------+----------+-----------+-----------+-----------+---------+-+   
+         2           4           6           8           10         12          14          16          18          20  
+                                                          Coverage                                                      
+                                                                                                                        
+Please choose data cutoff.  In essence, you are picking a minimum (within individual) coverage level for a read (allele) to be used in the reference assembly
+5
+
+                                                                                                                        
+                               Number of Unique Sequences present in more than X Individuals                            
+                                                                                                                        
+  3500 +-+-----------+------------+-------------+-------------+------------+-------------+------------+-----------+-+   
+       +             +            +             +             +            +             +            +             +   
+       |                                                                                                            |   
+       |                                                                                                            |   
+       |    *                                                                                                       |   
+  3000 +-+   *                                                                                                    +-+   
+       |      *                                                                                                     |   
+       |       *                                                                                                    |   
+       |        *                                                                                                   |   
+  2500 +-+       *                                                                                                +-+   
+       |          ***                                                                                               |   
+       |             *                                                                                              |   
+       |              *                                                                                             |   
+       |               ***                                                                                          |   
+  2000 +-+                ******                                                                                  +-+   
+       |                        **                                                                                  |   
+       |                          ******                                                                            |   
+       |                                ********                                                                    |   
+  1500 +-+                                      ********                                                          +-+   
+       |                                                **************                                              |   
+       |                                                              *************                                 |   
+       |                                                                           *******************              |   
+       +             +            +             +             +            +             +            ***************   
+  1000 +-+-----------+------------+-------------+-------------+------------+-------------+------------+-----------+-+   
+       0             5            10            15            20           25            30           35            40  
+                                                   Number of Individuals                                                
+                                                                                                                        
+Please choose data cutoff.  Pick point right before the assymptote. A good starting cutoff might be 10% of the total number of individuals
+3
+
+
+STEP 2: FILTER SNPs
+(1) Make a directory and link data
+$ mkdir Filter
+$ cd Filter
+$ ln -s ../TotalRawSNPs.vcf .
+
+(2) VCF tools
+$ vcftools --vcf TotalRawSNPs.vcf --max-missing 0.5 --maf 0.001 --minQ 20 --recode --recode-INFO-all --out TRS
+Output
+Parameters as interpreted:
+	--vcf TotalRawSNPs.vcf
+	--recode-INFO-all
+	--maf 0.001
+	--minQ 20
+	--max-missing 0.5
+	--out TRS
+	--recode
+
+After filtering, kept 80 out of 80 Individuals
+Outputting VCF file...
+After filtering, kept 2991 out of a possible 3020 Sites
+Run Time = 2.00 seconds
+
+$ vcftools --vcf TRS.recode.vcf --minDP 5 --recode --recode-INFO-all --out TRSdp5
+Output
+Parameters as interpreted:
+	--vcf TRS.recode.vcf
+	--recode-INFO-all
+	--minDP 5
+	--out TRSdp5
+	--recode
+
+After filtering, kept 80 out of 80 Individuals
+Outputting VCF file...
+After filtering, kept 2991 out of a possible 2991 Sites
+Run Time = 3.00 seconds
+
+$ pop_missing_filter.sh TRSdp5.recode.vcf ../popmap 0.05 1 TRSdp5p05
+Output
+Parameters as interpreted:
+	--vcf TRSdp5.recode.vcf
+	--keep keep.PopA
+	--out PopA
+	--missing-site
+
+Keeping individuals in 'keep' list
+After filtering, kept 20 out of 80 Individuals
+Outputting Site Missingness
+After filtering, kept 2991 out of a possible 2991 Sites
+Run Time = 1.00 seconds
+
+Parameters as interpreted:
+	--vcf TRSdp5.recode.vcf
+	--keep keep.PopB
+	--out PopB
+	--missing-site
+
+Keeping individuals in 'keep' list
+After filtering, kept 20 out of 80 Individuals
+Outputting Site Missingness
+After filtering, kept 2991 out of a possible 2991 Sites
+Run Time = 0.00 seconds
+
+Parameters as interpreted:
+	--vcf TRSdp5.recode.vcf
+	--keep keep.PopC
+	--out PopC
+	--missing-site
+
+Keeping individuals in 'keep' list
+After filtering, kept 20 out of 80 Individuals
+Outputting Site Missingness
+After filtering, kept 2991 out of a possible 2991 Sites
+Run Time = 0.00 seconds
+
+Parameters as interpreted:
+	--vcf TRSdp5.recode.vcf
+	--keep keep.PopD
+	--out PopD
+	--missing-site
+
+Keeping individuals in 'keep' list
+After filtering, kept 20 out of 80 Individuals
+Outputting Site Missingness
+After filtering, kept 2991 out of a possible 2991 Sites
+Run Time = 0.00 seconds
+
+Parameters as interpreted:
+	--vcf TRSdp5.recode.vcf
+	--exclude-positions loci.to.remove
+	--recode-INFO-all
+	--out TRSdp5p05
+	--recode
+
+After filtering, kept 80 out of 80 Individuals
+Outputting VCF file...
+After filtering, kept 2812 out of a possible 2991 Sites
+Run Time = 3.00 seconds
+
+(3) dDocent Filtering
+$ dDocent_filters TRSdp5p05.recode.vcf TRSdp5p05
+
+Number of sites filtered based on allele balance at heterozygous loci, locus quality, and mapping quality / Depth
+ 678 of 2812 
+
+Number of additional sites filtered based on overlapping forward and reverse reads
+ 0 of 2134 
+
+Is this from a mixture of SE and PE libraries? Enter yes or no.
+yes
+Number of additional sites filtered based on properly paired status
+ 0 of 2134 
+
+Number of sites filtered based on high depth and lower than 2*DEPTH quality score
+ 285 of 2134 
+
+
+                                                                                                                        
+                                             Histogram of mean depth per site                                           
+                                                                                                                        
+  250 +-+-+---+---+---+---+---+---+--+---+---+---+---+---+---+---+---+---+---+---+---+---+--+---+---+---+---+---+-+-+   
+      +   +   +   +   +   +   +   +  +   +   +   +   +   +   +   +   +   +   +   +   +   +  +   +   +   +   +   +   +   
+      |                                      *            'meandepthpersite' using (bin($1,binwidth)):(1.0) ******* |   
+      |                                     **                                                                      |   
+      |                                    ****                                                                     |   
+  200 +-+                                  ****                                                                   +-+   
+      |                                    ****                                                                     |   
+      |                                   *****                                                                     |   
+      |                                   *****                                                                     |   
+  150 +-+                                *******                                                                  +-+   
+      |                                  *******                                                                    |   
+      |                                  *******                                                                    |   
+      |                                  *******                                                                    |   
+      |                                  ********                                                                   |   
+  100 +-+                                ********                                                                 +-+   
+      |                                  ********                                                                   |   
+      |                                  ********                                                                   |   
+      |                                **********                                                                   |   
+   50 +-+                              **********                                                                 +-+   
+      |                               ***********                                                                   |   
+      |                              *************                                                                  |   
+      |                              ***************                                                                |   
+      +   +   +   +   +   +   +   +  ****************+   +   +   +   +   +   +   +   +   +  +   +   +   +   +   +   +   
+    0 +-+-+---+---+---+---+---+---+********************--+---+---+---+---+---+---+---+---+--+---+---+---+---+---+-+-+   
+      10  15  20  25  30  35  40  45 50  55  60  65  70  75  80  85  90  95 100 105 110 11 120 125 130 135 140 145 150  
+                                                        Mean Depth                                                      
+                                                                                                                        
+If distrubtion looks normal, a 1.645 sigma cutoff (~90% of the data) would be 5168.208395
+The 95% cutoff would be 64
+Would you like to use a different maximum mean depth cutoff than 64, yes or no
+yes
+Please enter new cutoff
+75
+Number of sites filtered based on maximum mean depth
+ 0 of 2134 
+
+Number of sites filtered based on within locus depth mismatch
+ 0 of 1965 
+
+Total number of sites filtered
+ 847 of 2812 
+
+Remaining sites
+ 1965 
+
+Filtered VCF file is called Output_prefix.FIL.recode.vcf
+
+Filter stats stored in TRSdp5p05.filterstats
+
+(4) VCF
+$ vcfallelicprimitives -k -g TRSdp5p05.FIL.recode.vcf |sed 's:\.|\.:\.\/\.:g' > TRSdp5p05F.prim
+
+$ vcftools --vcf TRSdp5p05F.prim --recode --recode-INFO-all --remove-indels --out SNP.TRSdp5p05F
+Output
+Parameters as interpreted:
+	--vcf TRSdp5p05F.prim
+	--recode-INFO-all
+	--out SNP.TRSdp5p05F
+	--recode
+	--remove-indels
+
+After filtering, kept 80 out of 80 Individuals
+Outputting VCF file...
+After filtering, kept 1713 out of a possible 2112 Sites
+Run Time = 1.00 seconds
+
+$ filter_hwe_by_pop.pl -v SNP.TRSdp5p05F.recode.vcf -p ../popmap -c 0.5 -out SNP.TRSdp5p05FHWE
+Processing population: PopA (20 inds)
+Processing population: PopB (20 inds)
+Processing population: PopC (20 inds)
+Processing population: PopD (20 inds)
+Outputting results of HWE test for filtered loci to 'filtered.hwe'
+Kept 1713 of a possible 1713 loci (filtered 0 loci)
+
+$ vcftools --vcf SNP.TRSdp5p05FHWE.recode.vcf --maf 0.05 --recode --recode-INFO-all --out SNP.TRSdp5p05FHWEmaf05
+Output
+Parameters as interpreted:
+	--vcf SNP.TRSdp5p05FHWE.recode.vcf
+	--recode-INFO-all
+	--maf 0.05
+	--out SNP.TRSdp5p05FHWEmaf05
+	--recode
+
+After filtering, kept 80 out of 80 Individuals
+Outputting VCF file...
+After filtering, kept 938 out of a possible 1713 Sites
+Run Time = 1.00 seconds
+
+
+STEP 3: CONVERTING FROM VCF TO OTHER OUTPUTS
+$ cp /home/BIO594/DATA/Week7/example/BSsnp.spid .
+$ ln -s ../popmap .
+
+$ java -jar /usr/local/bin/PGDSpider2-cli.jar -inputfile SNP.TRSdp5p05FHWEmaf05.recode.vcf -outputfile SNP.TRSdp5p05FHWEBS -spid BSsnp.spid
+Output
+WARN  23:41:49 - PGDSpider configuration file not found! Loading default configuration.
+initialize convert process...
+read input file...
+read input file done.
+write output file...
+write output file done.
+
+
+STEP 4: TWO OUTLIER DETECTION PROGRAMS
+(1) BAYESCAN
+$ BayeScan2.1_linux64bits SNP.TRSdp5p05FHWEBS -nbp 30 -thin 20
+
+(2) Copy R source file
+$  cp /home/jpita/Week_7and8/plot_R.r .
+
+(3) R
+$ R
+> source("plot_R.r")
+> plot_bayescan("SNP.TRSdp5p05FH_fst.txt")
+Output
+$outliers
+[1] 443 474 475 720 721
+
+$nb_outliers
+[1] 5
+* A graph (log10(q value), fst) was generated in XQuartz.
+
+(4) Quit R
+> quit()
+Save workspace image? [y/n/c]: y
+
+(5) More Outlier Detection
+$ vcftools --vcf SNP.TRSdp5p05FHWEmaf05.recode.vcf --max-alleles 2 --recode --recode-INFO-all --out SNP.TRSdp5p05FHWE2A
+Output
+Parameters as interpreted:
+	--vcf SNP.TRSdp5p05FHWEmaf05.recode.vcf
+	--recode-INFO-all
+	--max-alleles 2
+	--out SNP.TRSdp5p05FHWE2A
+	--recode
+
+After filtering, kept 80 out of 80 Individuals
+Outputting VCF file...
+After filtering, kept 935 out of a possible 938 Sites
+Run Time = 0.00 seconds
+
+STEP 5: PCAdapt
+(1) Run R and load library
+$ R
+> library(pcadapt)
+
+(2) Load VCF file
+> filename <- read.pcadapt("SNP.TRSdp5p05FHWE2A.recode.vcf", type = "vcf")
+Output
+No variant got discarded.
+Summary:
+
+	- input file:				SNP.TRSdp5p05FHWE2A.recode.vcf
+	- output file:				SNP.TRSdp5p05FHWE2A.recode.pcadapt
+
+	- number of individuals detected:	80
+	- number of loci detected:		935
+	
+(3) PCA #1
+> x <- pcadapt(input = filename, K = 20)
+Output
+Reading file /home/jpita/Week_7and8/simulated/Filter/SNP.TRSdp5p05FHWE2A.recode.pcadapt...
+Number of SNPs: 935
+Number of individuals: 80
+
+(4) Plot likelihoods
+> x <- pcadapt(input = filename, K = 20)
+* A graph (PC, Proportion of explained variance) was generated in XQuartz (K=20).
+
+(5) Plot likelihoods for only first 10 K
+> plot(x, option = "screeplot", K = 10)
+* A graph (PC, Proportion of explained variance) was generated in XQuartz (K=10).
+
+(6) Population designations
+> poplist.names <- c(rep("POPA", 20),rep("POPB", 20),rep("POPC", 20), rep("POPD",20))
+
+(7) Plot PCA1 and PCA2
+> plot(x, option = "scores", pop = poplist.names)
+
+(8) Plot PCA2 and PCA3
+> plot(x, option = "scores", i = 2, j = 3, pop = poplist.names)
+
+(9) Plot PCA3 and PCA4
+> plot(x, option = "scores", i = 3, j = 4, pop = poplist.names)
+
+NOTE: THE BEST POPULATION CLUSTERS (GROUPINGS) WERE AQUIRED IN THE PCA1-PCA2 PLOT
+
+** SUBSTEPS 10-16 OF STEP 5 WERE NOT REQUIRED FOR THE ASSIGNMENT **
+
+(10) Redo PCA with K=3
+> x <- pcadapt(filename, K = 3)
+Output
+Reading file /home/jpita/Week_7and8/simulated/Filter/SNP.TRSdp5p05FHWE2A.recode.pcadapt...
+Number of SNPs: 935
+Number of individuals: 80
+
+>summary(x)
+Output
+                Length Class  Mode   
+scores           240   -none- numeric
+singular.values    3   -none- numeric
+zscores         2805   -none- numeric
+loadings        2805   -none- numeric
+maf              935   -none- numeric
+missing          935   -none- numeric
+stat             935   -none- numeric
+gif                1   -none- numeric
+chi2.stat        935   -none- numeric
+pvalues          935   -none- numeric
+
+(11) Manhattan Plot
+> plot(x, option = "manhattan")
+* A graph (SNP(with mAF>0.05), -log10(p-values)) was generated in XQuartz.
+
+(12) Q-Q Plot
+> plot(x, option = "qqplot", threshold = 0.1)
+* A graph (Expected -log10(p-values), Observed -log10(p-values)) was generated in XQuartz.
+
+(13) P-value Distribution
+> plot(x, option = "stat.distribution")
+* A graph (chi2, density) was generated in XQuartz.
+
+(14) FDR
+> library(qvalue)
+> qval <- qvalue(x$pvalues)$qvalues
+> alpha <- 0.1
+
+(15) Save Outliers
+> outliers <- which(qval < alpha)
+
+(16) Test for library effects
+> poplist.names <- c(rep("LIB1", 40),rep("LIB2", 40))
+> x <- pcadapt(input = filename, K = 20)
+Output
+Reading file /home/jpita/Week_7and8/simulated/Filter/SNP.TRSdp5p05FHWE2A.recode.pcadapt...
+Number of SNPs: 935
+Number of individuals: 80
+
+(16.1) Plot the output 
+> plot(x, option = "scores", pop = poplist.names)
+* Output - library effects in PCA1 and PCA2
+> plot(x, option = "scores", i = 2, j = 3, pop = poplist.names)
+* Output - library effects in PCA2 and PCA3
+
+> x <- pcadapt(filename, K = 2)
+Output
+Reading file /home/jpita/Week_7and8/simulated/Filter/SNP.TRSdp5p05FHWE2A.recode.pcadapt...
+Number of SNPs: 935
+Number of individuals: 80
+
+> summary(x)
+                Length Class  Mode   
+scores           160   -none- numeric
+singular.values    2   -none- numeric
+zscores         1870   -none- numeric
+loadings        1870   -none- numeric
+maf              935   -none- numeric
+missing          935   -none- numeric
+stat             935   -none- numeric
+gif                1   -none- numeric
+chi2.stat        935   -none- numeric
+pvalues          935   -none- numeric
+
+(16.2) Updated plots
+> plot(x , option = "manhattan")
+> plot(x, option = "qqplot", threshold = 0.1)
+> plot(x, option = "stat.distribution")
+
+> library(qvalue)
+> qval <- qvalue(x$pvalues)$qvalues
+> alpha <- 0.1
+> outliers <- which(qval < alpha)
+
+* NOTE: STEP 5 includes extra analyses and generated plots than asked for the assignment (i.e. Run 1 PCA and 1 DAPC).
+
+
+STEP 6: MORE PCAs / RUN A DAPC WITH NEUTRAL DATA
+** R code continues from this point on **
+** Working directory changed **
+> /home/jpita/Week_7and8/simulated
+
+(1) Download required libraries
+> library(adegenet)
+> library(vcfR)
+> library("hierfstat")
+
+(2) Import/Link LibraryInfo and VCF file
+
+> strata <- read.table("LibraryInfo", header=TRUE)
+> strata_df <- data.frame(strata)
+
+> quit()
+** Quit R to change working directory **
+> /home/jpita/Week_7and8/simulated/Filter
+
+** NOTE: Every time you enter to R you need to download the libraries **
+
+my_vcf <- read.vcfR("SNP.TRSdp5p05FHWE2A.recode.vcf")
+Output
+Scanning file to determine attributes.
+File attributes:
+  meta lines: 64
+  header line: 65
+  variant count: 935
+  column count: 89
+Meta line 64 read in.
+All meta lines processed.
+gt matrix initialized.
+Character matrix gt created.
+  Character matrix gt rows: 935
+  Character matrix gt cols: 89
+  skip: 0
+  nrows: 935
+  row_num: 0
+Processed variant: 935
+All variants processed
+
+(3) Change format
+> my_genind <- vcfR2genind(my_vcf)
+
+> my_genind
+/// GENIND OBJECT /////////
+
+ // 80 individuals; 935 loci; 1,870 alleles; size: 1.1 Mb
+
+ // Basic content
+   @tab:  80 x 1870 matrix of allele counts
+   @loc.n.all: number of alleles per locus (range: 2-2)
+   @loc.fac: locus factor for the 1870 columns of @tab
+   @all.names: list of allele names for each locus
+   @ploidy: ploidy of each individual  (range: 2-2)
+   @type:  codom
+   @call: adegenet::df2genind(X = t(x), sep = sep)
+
+ // Optional content
+   - empty -
+
+** To avoid changing working directories **
+(FilterSNPs) [jpita@KITT simulated]$ cd Filter/
+(FilterSNPs) [jpita@KITT Filter]$ ln -s /home/jpita/Week_7and8/simulated/LibraryInfo .
+
+REENTER TO R
+> strata<- read.table("LibraryInfo", header=TRUE)
+> strata_df <- data.frame(strata)
+> strata(my_genind) <- strata_df
+
+** Assign populations to this data**
+> setPop(my_genind) <- ~Population
+
+> fstat(my_genind)
+Output
+             pop       Ind
+Total 0.08182986 0.2286609
+pop   0.00000000 0.1599170
+
+> matFst <- pairwise.fst(my_genind)
+
+> X <- tab(my_genind, freq = TRUE, NA.method = "mean")
+> pca1 <- dudi.pca(X, scale = FALSE, scannf = FALSE, nf = 3)
+> barplot(pca1$eig[1:50], main = "PCA eigenvalues", col = heat.colors(50))
+> s.class(pca1$li, pop(my_genind))
+> title("PCA of simulated dataset\naxes 1-2")
+> add.scatter.eig(pca1$eig[1:20], 3,1,2)
+> col <- funky(15)
+** PCA was generated in XQuartz **
+
+> s.class(pca1$li, pop(my_genind),xax=1,yax=2, col=col, axesell=FALSE, cstar=0, cpoint=3, grid=FALSE)
+** PCA (PopA-D clusters) was generated in XQuartz **
+
+#### DAPC ####
+> grp <- find.clusters(my_genind, max.n.clust=40)
+Choose the number PCs to retain (>= 1): 80
+Choose the number of clusters (>=2: 2
+> table(pop(my_genind), grp$grp)
+      
+        1  2
+  PopA  0 20
+  PopB  0 20
+  PopC  0 20
+  PopD 20  0
+
+* A graph (number of clusters, BIC) was generated in XQuartz.
+
+> table.value(table(pop(my_genind), grp$grp), col.lab=paste("inf", 1:2), row.lab=paste("ori", 1:4))
+> dapc1 <- dapc(my_genind, grp$grp)
+Choose the number PCs to retain (>=1): 40
+Choose the number discriminant functions to retain (>=1): 2
+> scatter(dapc1,col=col,bg="white", solid=1)
+** A DAPC (Discriminant function 1, Density) was generated in XQuartz **
+
+> contrib <- loadingplot(dapc1$var.contr, axis=1, thres=.01, lab.jitter=1)
+** A loading plot was generated in XQuartz **
+
+> contrib
+NULL
+
+> setPop(my_genind) <- ~Library
+> dapc1 <- dapc(my_genind, pop(my_genind))
+Choose the number PCs to retain (>=1): 40
+Choose the number discriminant functions to retain (>=1): 2
+** A DAPC (Discriminant function 1, Density) was generated in XQuartz **
+
+> contrib <- loadingplot(dapc1$var.contr, axis=1, thres=.05, lab.jitter=1)
+** A loading plot was generated in XQuartz **
+
+> quit()
+
+
+#########################################################################
+
+PART 2: REAL DATA
+
+STEP 1: RUN BAYESCAN
+(1) Change in working directory
+$ /home/jpita/Week_7and8/realdata
+
+(2) Convert VCF file to other outputs
+$ java -jar /usr/local/bin/PGDSpider2-cli.jar -inputfile SNP.DP3g98maf01_85INDoutFIL.NO2a.HWE.FIL.recode.vcf -outputfile SNP.DP3g98maf01 -spid BSsnp.spid
+WARN  21:18:13 - PGDSpider configuration file not found! Loading default configuration.
+
+(3) BayeScan
+$ BayeScan2.1_linux64bits SNP.DP3g98maf01 -nbp 30 -thin 20
+Using 80 threads (80 cpu detected on this machine)
+Pilot and Calculation runs...
+
+(4) Run R
+$ R 
+** R code from this point on... **
+
+> source("plot_R.r")
+> plot_bayescan("SNP.DP3g98m_fst.txt")
+$outliers
+integer(0)
+
+$nb_outliers
+[1] 0
+
+** A BayeScan plot (log10(q value), fst) was generated in XQuartz **
+
+STEP 2: RUN ONE PCA AND ONE DAPC (W. OUTLIER FREE DATA)
+(1) Run R
+$ R
+
+(2) Download library
+> library(pcadapt)
+> library(vcfR)
