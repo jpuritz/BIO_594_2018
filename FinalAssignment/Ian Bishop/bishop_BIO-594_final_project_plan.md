@@ -11,7 +11,7 @@ Last year, a post-doc in our lab sequenced 40 diatoms genomes (WGS), 20 each fro
 
 The basic goals of the proposed project are as follows:
 1. Develop a personal pipeline for analyzing neutral population structure in marine diatoms. My PhD work will be focusing on populations of cultured diatoms recently collected from 6 different regions of the Southern Ocean. I will be using microsatellites to characterize this structure (see goal #2), but I also want to use SNPs. This dataset will help me prep for my own analyses.
-2. Test my ability to discover candidate microsatellite markers using the same shotgun sequencing dataset as is used to analyze SNPs. As a library of microsatellite markers have recently been developed in our lab for <i>T. rotula</i>, I would like to compare what I might find bioinformatically (with bioconda tools like pal_finder) with markers found by other means.
+2. Test the viability of discovering candidate microsatellite markers using the same shotgun sequencing dataset as is used to analyze SNPs. As a library of microsatellite markers have recently been developed and deployed in our lab for <i>T. rotula</i>, I would like to compare what I might find bioinformatically (with bioconda tools like [pal_finder](https://sourceforge.net/projects/palfinder/)) with markers found by other means.
 
 ## Data description
 <i>Summarize the type of data, the location, and the size of the data set</i>
@@ -38,20 +38,22 @@ step.</i>
 ##### Bioinformatic Processing
 * Read Trimming and Adapter Removal
 * De Novo Reference Assembly
-  * congeneric model reference genome available, likely too genetically distant. Also practice with de novo assembly will help with future work, as I will definitely not be using a model organism
-* Contig binning.
+  * congeneric model reference genome is available, but possibly too genetically distant for accurate assembly. Practice with de novo assembly will help with future work, as I will definitely not be using a model organism
+* Contig binning
   * DNA extractions derive from cultures and while <i>T. rotula</i> should be only eukaryote present, lots of assembled contigs will be bacterial and viral in origin
 * Filtering of non-eukaryote contigs from de novo reference
 * Read Mapping
 * SNP Variant Calling
   * Filter out putatively selected SNP loci using BayeScan
 * Microsatellite Calling
-  * Filter for stable flanking region, variability of repeat motif, using [pal_finder](https://sourceforge.net/projects/palfinder/)
+  * Filter for stable flanking region, variability of repeat motif, using pal_finder
 
 ##### Population-level
 * Neutral Population Structure
   * DAPC using SNPs
   * DAPC using microsatellites
+  * STRUCTURE using SNPs
+  * STRUCTURE using microsatellites 
 * Recovery of previously developed <i>T. rotula</i> microsatellite location
   * Extent of overlap between project-generated microsatellite loci and already developed and [utilized set](http://www.pnas.org/content/pnas/suppl/2017/02/15/1612346114.DCSupplemental/pnas.1612346114.sapp.pdf) (Whittaker & Rynearson 2017)<sup>2</sup>
 
