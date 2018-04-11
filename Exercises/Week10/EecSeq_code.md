@@ -48,7 +48,7 @@ Picard is a java jar file, so we can download it directly here
  
 Now we can use Picard to mark PCR duplicates in our files
 ``` 
-java -Xms4g -jar picard.jar MarkDuplicatesWithMateCigar I=EC_2.bam O=EC_2md.bam M=EC_2_dup_metrics.txt MINIMUM_DISTANCE=300`
+java -Xms4g -jar picard.jar MarkDuplicatesWithMateCigar I=EC_2.bam O=EC_2md.bam M=EC_2_dup_metrics.txt MINIMUM_DISTANCE=300
 ``` 
 The output should end with something like this:
 ```
@@ -56,7 +56,7 @@ INFO	2018-02-11 14:21:41	MarkDuplicatesWithMateCigar	Marking 250325 records as d
 INFO	2018-02-11 14:21:41	MarkDuplicatesWithMateCigar	Found 14208 optical duplicate clusters.
 ``` 
 ```
-java -Xms4g -jar picard.jar MarkDuplicatesWithMateCigar I=EC_4.bam O=EC_4md.bam M=EC_4_dup_metrics.txt MINIMUM_DISTANCE=300`
+java -Xms4g -jar picard.jar MarkDuplicatesWithMateCigar I=EC_4.bam O=EC_4md.bam M=EC_4_dup_metrics.txt MINIMUM_DISTANCE=300
 ```
 
 The output should end with something like this:
@@ -65,7 +65,7 @@ INFO	2018-02-11 14:23:56	MarkDuplicatesWithMateCigar	Marking 215838 records as d
 INFO	2018-02-11 14:23:56	MarkDuplicatesWithMateCigar	Found 11010 optical duplicate clusters.
 ``` 
 ```
-java -Xms4g -jar picard.jar MarkDuplicatesWithMateCigar I=EC_7.bam O=EC_7md.bam M=EC_7_dup_metrics.txt MINIMUM_DISTANCE=300`
+java -Xms4g -jar picard.jar MarkDuplicatesWithMateCigar I=EC_7.bam O=EC_7md.bam M=EC_7_dup_metrics.txt MINIMUM_DISTANCE=300
 ```
 The output should end with something like this:
 ```
