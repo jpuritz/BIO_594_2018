@@ -31,15 +31,14 @@ We have three replicate capture pools, EC_2, EC_4, EC_7, as well as the referenc
 
 Remember, exome capture reads are derived from genomic DNA.  The reads in the FASTQ files already have been trimmed 
 and only contain reads that originally mapped to Chromosome 1 of the eastern oyster genome.
-This means that we can proceed directly to mapping with BWA and sorting with samtools.  However, to conserve computing resources, please don't actually run these commands
-I have put the finished bam files in this directory.  The commands below are for reference.
+This means that we can proceed directly to mapping with BWA and sorting with samtools.  
 ```
-bwa mem reference.fasta EC_2.F.fq.gz EC_2.R.fq.gz -t 4 -a -M -B 3 -O 5 -R "@RG\tID:EC_2\tSM:EC_2\tPL:Illumina" 2> bwa.EC_2.log | samtools view -@4 -q 1 -SbT reference.fasta - > EC_2.bam
-bwa mem reference.fasta EC_4.F.fq.gz EC_4.R.fq.gz -t 4 -a -M -B 3 -O 5 -R "@RG\tID:EC_4\tSM:EC_4\tPL:Illumina" 2> bwa.EC_4.log | samtools view -@4 -q 1 -SbT reference.fasta - > EC_4.bam
-bwa mem reference.fasta EC_7.F.fq.gz EC_7.R.fq.gz -t 4 -a -M -B 3 -O 5 -R "@RG\tID:EC_7\tSM:EC_7\tPL:Illumina" 2> bwa.EC_7.log | samtools view -@4 -q 1 -SbT reference.fasta - > EC_7.bam
-samtools sort -@4 EC_2.bam -o EC_2.bam && samtools index EC_2.bam 
-samtools sort -@4 EC_4.bam -o EC_4.bam && samtools index EC_4.bam 
-samtools sort -@4 EC_7.bam -o EC_7.bam && samtools index EC_7.bam 
+bwa mem reference.fasta EC_2.F.fq.gz EC_2.R.fq.gz -t 8 -a -M -B 3 -O 5 -R "@RG\tID:EC_2\tSM:EC_2\tPL:Illumina" 2> bwa.EC_2.log | samtools view -@4 -q 1 -SbT reference.fasta - > EC_2.bam
+bwa mem reference.fasta EC_4.F.fq.gz EC_4.R.fq.gz -t 8 -a -M -B 3 -O 5 -R "@RG\tID:EC_4\tSM:EC_4\tPL:Illumina" 2> bwa.EC_4.log | samtools view -@4 -q 1 -SbT reference.fasta - > EC_4.bam
+bwa mem reference.fasta EC_7.F.fq.gz EC_7.R.fq.gz -t 8 -a -M -B 3 -O 5 -R "@RG\tID:EC_7\tSM:EC_7\tPL:Illumina" 2> bwa.EC_7.log | samtools view -@4 -q 1 -SbT reference.fasta - > EC_7.bam
+samtools sort -@8 EC_2.bam -o EC_2.bam && samtools index EC_2.bam 
+samtools sort -@8 EC_4.bam -o EC_4.bam && samtools index EC_4.bam 
+samtools sort -@8 EC_7.bam -o EC_7.bam && samtools index EC_7.bam 
 ``` 
 The next thing we want to do is to mark duplicate reads.  We will use Picard tools to do this (https://broadinstitute.github.io/picard/)
 Picard is a java jar file, so we can download it directly here
