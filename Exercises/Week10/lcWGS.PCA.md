@@ -259,10 +259,10 @@ First rerun fastNGSadmix to get the admixture proportions, which we will use as 
 
 ```
 # Analyse sample2
-$fastNGSadmix -likes ${inputpath}/sample2.beagle.gz -fname ${inputpath}/refPanel.txt -Nname ${inputpath}/nInd.txt -outfiles sample2 -whichPops all
+fastNGSadmix -likes ${inputpath}/sample2.beagle.gz -fname ${inputpath}/refPanel.txt -Nname ${inputpath}/nInd.txt -outfiles sample2 -whichPops all
 
 # Analyse sample3
-$fastNGSadmix -likes ${inputpath}/sample3.beagle.gz -fname ${inputpath}/refPanel.txt -Nname ${inputpath}/nInd.txt -outfiles sample3 -whichPops all
+fastNGSadmix -likes ${inputpath}/sample3.beagle.gz -fname ${inputpath}/refPanel.txt -Nname ${inputpath}/nInd.txt -outfiles sample3 -whichPops all
 ```
 
 Both qopt files should indicate that the sample is 100% Karitiana. We will add our sample to the  genotypes of our reference panel can perform PCA using the genotype likelihoods and admixture aware priors for the NGS sample
@@ -283,7 +283,7 @@ Rscript $fastNGSadmixPCA -likes ${inputpath}/sample2.beagle.gz -qopt sample2.qop
 
 View the PCA plot by typing:
 ```
- evince sample2_PCAplot.pdf
+ okular sample2_PCAplot.pdf
 
 ```
 
@@ -314,7 +314,7 @@ Rscript $fastNGSadmixPCA -likes noInfo.beagle.gz -qopt sample2.qopt  -ref $refGe
 view the output plot called noInfo_PCAplot.pdf
 
 ```
- evince noInfo_PCAplot.pdf
+ okular noInfo_PCAplot.pdf
 ```
 
 The non-informative prior was set to 0.33 for each genotype. Try to modify the above script and change the value 0.33 to something else. Then perform the PCA one more time
@@ -337,7 +337,7 @@ Run the PCA for the low depth sample:
 Rscript $fastNGSadmixPCA -likes ${inputpath}/sample3.beagle.gz -qopt sample3.qopt  -ref $refGeno -out sample3
 
 ## view the results
-evince sample3_PCAplot.pdf
+okular sample3_PCAplot.pdf
 ```
 
  - Does this sample fall just as nicely as the other Karitiana sample?
@@ -349,17 +349,18 @@ evince sample3_PCAplot.pdf
 Let's try to perform PCA analysis on the large 1000 genotype genotype likelihoods that you performed admixture analysis on yesterday.
 First let set the path to program and the input file
 ```
-# NB this must be done every time you open a new terminal
-AA=/home/albrecht/PhDCourse
+
+conda install numpy scipy pandas numba
+pip install sklearn
 
 ## PCAngsd
-PCAngsd=$AA/prog/pcangsd/pcangsd.py
+PCAngsd=/usr/local/bin/pcangsd.py
 
 ## beagle genotype likelihood file
-GL1000Genomes=$AA/admixture/data/input.gz
+GL1000Genomes=/home/BIO594/Exercises/Week_10/admix_data/input.gz
 
 ## copy population information file to current folder
-cp $AA/admixture/data/pop.info .
+cp /home/BIO594/Exercises/Week_10/admix_data/pop.info .
 
 ```
 
@@ -367,7 +368,7 @@ cp $AA/admixture/data/pop.info .
  - What were the populations included? And how many sites?
 
 ```
-python $PCAngsd -beagle $GL1000Genomes -o input -n 100
+/usr/bin/python $PCAngsd -beagle $GL1000Genomes -o input -n 100
 ```
 
 The program estimates the covariance matrix that can then be used for PCA. look at the output from the program
@@ -393,14 +394,9 @@ view the results with
 
 ```
 
-evince PCAngsd.pdf
+okular PCAngsd.pdf
 ```
 
-
-
-
-Compare with the estimate admixture proportions
- http://randy.popgen.dk/popgen17/pass/exercises/admixexercisefiles/plots/BestK3.png
 
  - In the PCA plot can you identify the Mexicans with only European ancestry?
  - What about the African American with East Asian ancestry?
@@ -409,7 +405,7 @@ Compare with the estimate admixture proportions
 Try the same analysis but without estimating individual allele frequencies. This is the same as using the first iteration of the algorithm
 
 ```
-python $PCAngsd -beagle $GL1000Genomes -o input2 -iter 0 -n 100
+/usr/bin/python $PCAngsd -beagle $GL1000Genomes -o input2 -iter 0 -n 100
 ```
 
 Plot the results in R
@@ -429,7 +425,7 @@ dev.off()
 View plot:
 
 ```
-evince PCAngsd2.pdf
+okular PCAngsd2.pdf
 ```
 
 
@@ -440,8 +436,9 @@ evince PCAngsd2.pdf
 
 
 Let try to use the PCA to infer admixture proportions based on the first 2 principal components. For the optimization we will use a small penalty on the admixture proportions (alpha).
+
 ```
- python $PCAngsd -beagle $GL1000Genomes -o input -n 100 -admix -admix_alpha 50
+/usr/bin/python $PCAngsd -beagle $GL1000Genomes -o input -n 100 -admix -admix_alpha 50
 ```
 
 Plot the results in R
@@ -469,7 +466,7 @@ Inbreeding in admixed samples is usually not possible to estimate using standard
 Let's try to estimate the inbreeding coefficient of the samples using the average allele frequency
 
 ```
-python $PCAngsd -beagle $GL1000Genomes -o IB0 -inbreed 2 -n 100 -iter 0
+/usr/bin/python $PCAngsd -beagle $GL1000Genomes -o IB0 -inbreed 2 -n 100 -iter 0
 ```
 
 
@@ -487,7 +484,7 @@ The third column is an estimate of the inbreeding coefficient (allowing for nega
 Now let's try to estimate the inbreeding coefficient of the samples by using the individual allele frequencies predicted by the PCA
 
 ```
-python $PCAngsd -beagle $GL1000Genomes -o IB -inbreed 2 -n 100 
+/usr/bin/python $PCAngsd -beagle $GL1000Genomes -o IB -inbreed 2 -n 100 
 ```
 
 
@@ -505,12 +502,13 @@ For very resent selection we can look within closely related individuals for exa
 ```
 
 ## copy positions and sample information 
-cp $AA/PCangsd/data/eu1000g.sample.Info .
+cp /home/BIO594/Exercises/Week_10/eu1000g.sample.Info .
 
 #set pa
-EU1000=$AA/PCangsd/data/eu1000g.small.beagle.gz
+EU1000=/home/BIO594/Exercises/Week_10/eu1000g.small.beagle.gz
 wc eu1000g.sample.Info
-N=424 #one line for header
+
+# N=424 #one line for header
 ```
 
 
@@ -518,7 +516,7 @@ Run PCangsd with to estimate the covariance matrix while jointly estimating the 
 
 
 ```
-python $PCAngsd -beagle $EU1000 -o EUsmall -n $N -threads 20
+/usr/bin/python $PCAngsd -beagle $EU1000 -o EUsmall -n $N -threads 20
 ```
 
 Plot the results in R
@@ -543,7 +541,7 @@ Since the European individuals in 1000G are not simple homogeneous disjoint popu
 Now let try to use the PC to infer selection along the genome based on the PCA
 
 ```
-python $PCAngsd -beagle $EU1000 -o EUsmall -n $N -selection 1 -sites_save
+/usr/bin/python $PCAngsd -beagle $EU1000 -o EUsmall -n $N -selection 1 -sites_save
 ```
 
 plot the results
@@ -582,7 +580,7 @@ plot(-log10(pval),col=p$chr,xlab="Chromosomes",main="Manhatten plot")
 ```
 
 see if you can make sense of the top hit based on the genome.
-- Look in [[http://genome.ucsc.edu/cgi-bin/hgGateway][UCSC browser]]
+- Look in [UCSC browser](http://genome.ucsc.edu/cgi-bin/hgGateway)
 - Choose human GRCh38/hg38
 - search for the position of the top hit and identify the genes at that loci
 
