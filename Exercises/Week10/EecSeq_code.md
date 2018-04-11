@@ -6,7 +6,8 @@
 1.  To explore a small EecSeq data set
 2.	To learn how to use bedtools and samtools to explore coverage across genomic intervals and annotations
 3.	To plot the coverage of EecSeq pools across a gene of interest
-###########
+
+----------
 
 Let's find our way back to your original working directory and make a new EecSeq directory
 
