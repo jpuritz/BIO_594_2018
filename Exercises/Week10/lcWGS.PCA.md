@@ -146,33 +146,25 @@ print(C)
  
 
 
-
 ## PCA/MDS for real data
 
-### Setup data
-Before running any analyses you need to set paths to the programs and the data you will use by pasting this into your terminal:
+### Setup data and environment
 
+First, we need to create and load a ANGSD bioconda environment:
 ```
-# NB this must be done every time you open a new terminal
+conda create -n ANGSD angsd
+source activate ANGSD
 
-## set path to this session
-AA=/home/albrecht/PhDCourse/
+mkdir Week10
+cd Week10
+ln -s /home/BIO594/Exercises/Week_10/data/* .
 
-# Set path to ANGSD program
-ANGSD=$AA/prog/angsd/angsd
+ls *.bam > all.files
 
-# Set path to a bam file list with several bam files
-BAMFOLDER=$AA/sfs/data/smallerbams/
-```
-
-We will use the same files as for the admixture analysis. If you don't already have a list of the bam files then you can use this command.
-```
-find $BAMFOLDER |  grep bam$ > all.files
-```
 
 Get the IBS and covariance matrix from the NGS data. 
 ```
-$ANGSD -bam all.files -minMapQ 30 -minQ 20 -GL 2 -out all -doMajorMinor 1 -doMaf 1 -SNP_pval 2e-6 -minInd 25  -doIBS 1 -doCounts 1 -doCov 1 -makeMatrix 1 -minMaf 0.05 -P 5
+angsd -bam all.files -minMapQ 30 -minQ 20 -GL 2 -out all -doMajorMinor 1 -doMaf 1 -SNP_pval 2e-6 -minInd 25  -doIBS 1 -doCounts 1 -doCov 1 -makeMatrix 1 -minMaf 0.05 -P 5
 ```
 
 
@@ -180,8 +172,9 @@ $ANGSD -bam all.files -minMapQ 30 -minQ 20 -GL 2 -out all -doMajorMinor 1 -doMaf
 
 Lets try to look at our estimate IBS matrix that was created from the first angsd command.
 
-```
-## Do in R
+#### Do in R
+
+```R
 #read in the names of each individual
 s<-strsplit(basename(scan("all.files",what="theHeck")),"\\.")
 pop<-as.factor(sapply(s,function(x)x[5]))
@@ -198,7 +191,7 @@ plot(mds,lwd=2,ylab="Dist",xlab="Dist",main="multidimensional scaling",col=pop)
 legend("center",levels(pop),fill=1:3)
 ```
 
-If you cannot view the figure then you can find it [[http://popgen.dk/albrecht/open/bgi/all.mds.pdf][here]].
+If you cannot view the figure then you can find it [here](http://popgen.dk/albrecht/open/bgi/all.mds.pdf).
 
  - Based on the plot which two populations are closest and this population is most distant?
  - Does it make sense that the YRI population form the most distant cluster?
@@ -223,49 +216,42 @@ e <- eigen(m)
 plot(e$vectors[,1:2],lwd=2,ylab="PC 2",xlab="PC 2",main="Principal components",col=as.factor(pop),pch=16);legend("top",fill=1:3,levels(as.factor(pop)))
 ```
 
-If you cannot view the figure then you can find it [[http://popgen.dk/albrecht/open/bgi/all.pca.pdf][here]]
+If you cannot view the figure then you can find it [here](http://popgen.dk/albrecht/open/bgi/all.pca.pdf).
 
 
-The plots are some what noisy. If you had used the whole genome it would have looked like this [[URL:http://popgen.dk/angsd/images/thumb/0/06/PCA_MDS.png/800px-PCA_MDS.png][plot]].
+The plots are some what noisy. If you had used the whole genome it would have looked like this [plot](http://popgen.dk/angsd/images/thumb/0/06/PCA_MDS.png/800px-PCA_MDS.png).
 
 # fastNGSadmix for PCA
 
 We will try to use an genotype likelihood appoach with admixture aware priors using fastNGSadmix
 
 ```
-# NB this must be done every time you open a new terminal
-AA=/home/albrecht/PhDCourse
+# Set path for the fastNGSadmixPCA program.  fastNGSadmix is already installed on KITT
 
-# Set path to ANGSD program
-ANGSD=$AA/prog/angsd/angsd
-
-# Set path to a bam file list with several bam files
-BAMFOLDER=$AA/sfs/data/smallerbams/
-
-# Set path for the fastNGSadmix program
-fastNGSadmix=$AA/prog/fastNGSadmix/fastNGSadmix
-fastNGSadmixPCA=$AA/prog/fastNGSadmix/R/fastNGSadmixPCA.R
+fastNGSadmixPCA=/home/BIO594/Exercises/Week_10/fastNGSadmixPCA.R
 
 # Set path for all input files you will use in this exercise
-inputpath=$AA/admixture/data/fastNGSadmixinput/
+inputpath=/home/BIO594/Exercises/Week_10/admix_data/
 
 ## genotypes of reference panel
-refGeno=$AA/prog/fastNGSadmix/data/humanOrigins_7worldPops
+refGeno=/home/BIO594/Exercises/Week_10/admix_data/ref_panel/humanOrigins_7worldPops
 
 
 
 ```
 
-We will use the same reference panel as for the admixture analysis
+We will use this  reference panel:
 
-French     | French individuals
-Han        | Chinese individuals
-Chukchi    | Siberian individuals
-Karitiana  | Native American individuals 
-Papuan     | individuals from Papua New Guinea, Melanesia
-Sindhi     | individuals from India
-YRI        | Yoruba individuals from Nigeria
-.
+|Code| Population of Origin|
+|---|-----|
+|French     | French individuals |
+|Han        | Chinese individuals |
+|Chukchi    | Siberian individuals |
+|Karitiana  | Native American individuals |
+|Papuan     | individuals from Papua New Guinea, Melanesia |
+|Sindhi     | individuals from India |
+|YRI        | Yoruba individuals from Nigeria |
+
 
 And we will also use the same individual as last time namely the two karitiana individuals sample2 and sample3.
 
