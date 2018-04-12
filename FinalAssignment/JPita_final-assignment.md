@@ -17,7 +17,7 @@ For this study I will analyze ddRAD-seq data for native populations of the Cuban
 - Populations (N=4): Esmerelda (ESM; Eastern Cuba), Caibarien (CAB; Central Cuba), Mariel (MAR; Western Cuba), Soroa (SOR; Western Cuba)
 
 ## Analysis Plan
--	FASTQC: Examine data quality
+-	FastQC: Examine data quality
 -	Trimmomatic: Trim adapters and low quality reads
 -	dDocent: Make a de novo assembly, SNP calling and filtering 
 -	VCFtools: Calculate pairwise Fst among all populations
