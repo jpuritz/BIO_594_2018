@@ -22,8 +22,11 @@ For this study I will analyze ddRAD-seq data for native populations of the Cuban
 -	dDocent: Make a de novo assembly, SNP calling and filtering 
 -	VCFtools: Calculate pairwise Fst among all populations
 -	R packages (pcadapt, adegenet) and STRUCTURE: Generate PCA, DAPC and STRUCTURE plots
+  <br>
   o	PCA: individual variation
+  <br>
   o	DAPC: individual variation and possible number of clusters
+  <br>
   o	STRUCTURE: allele frequencies to generate clusters
 
 ## References
