@@ -5,7 +5,7 @@
 ## Project Plan
 
 ### Brief Summary
-  The genome of the eastern oyster, *Crassostrea virginica* was sequenced in 2016 from a single inbred gynogenetic oyster^[1]^. This was chosen as a strategy to decrease the genetic polymorphism
+  The genome of the eastern oyster, *Crassostrea virginica* was sequenced in 2016 from a single inbred gynogenetic oyster (Gomez-Chiarri et al., 2015). This was chosen as a strategy to decrease the genetic polymorphism
   present in oysters. In order to survey the genetic variation across populations of the eastern oyster, a whole genome sequencing approach was used for 14 different populations, using 6 oysters from each population.
   I performed DNA extraction and sample preparation for this project as part of the Eastern Oyster Genome Consortium. WGS data is now currently available from these samples.
   Though many analyses are likely going to be performed on this large data set, I would like to start by estimating neutral population structure from this data.
@@ -24,6 +24,8 @@ Whole genome sequencing data is available for 90 oysters from each of 14 populat
 7. Calculate pairwise linkage disequilibrium via the correlation coefficient in VCFTools
 8. Assess genetic structure by using a PCA through the package adegenet 
 
+Steps in this analysis were modeled after the protocol in Benjelloun et al., 2015.
+
 ### References
 Benjelloun, Badr, et al. "Characterizing neutral genomic diversity and selection signatures in indigenous populations of Moroccan goats (Capra hircus) using WGS data." Frontiers in genetics 6 (2015): 107.
-
+Gómez-Chiarri, M., W. C. Warren, X. Guo, and D. Proestou. 2015. Developing tools for the study of molluscan immunity: The sequencing of the genome of the eastern oyster, Crassostrea virginica. Fish Shellfish Immunol. 46:2–4. 
