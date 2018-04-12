@@ -27,5 +27,6 @@ Whole genome sequencing data is available for 90 oysters from each of 14 populat
 Steps in this analysis were modeled after the protocol in Benjelloun et al., 2015.
 
 ### References
-Benjelloun, Badr, et al. "Characterizing neutral genomic diversity and selection signatures in indigenous populations of Moroccan goats (Capra hircus) using WGS data." Frontiers in genetics 6 (2015): 107.
-Gómez-Chiarri, M., W. C. Warren, X. Guo, and D. Proestou. 2015. Developing tools for the study of molluscan immunity: The sequencing of the genome of the eastern oyster, Crassostrea virginica. Fish Shellfish Immunol. 46:2–4. 
+1. Benjelloun, Badr, et al. "Characterizing neutral genomic diversity and selection signatures in indigenous populations of Moroccan goats (Capra hircus) using WGS data." Frontiers in genetics 6 (2015): 107.
+
+2. Gómez-Chiarri, M., W. C. Warren, X. Guo, and D. Proestou. 2015. Developing tools for the study of molluscan immunity: The sequencing of the genome of the eastern oyster, Crassostrea virginica. Fish Shellfish Immunol. 46:2–4. 
