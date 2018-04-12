@@ -28,3 +28,5 @@ For this study I will analyze ddRAD-seq data for native populations of the Cuban
 
 ## References
 Kolbe, J., Glor, R., Rodríguez Schettino, L., Chamizo Lara, A., Larson, A., Losos, J. (2004). Genetic variation increases during biological invasion by a Cuban lizard. Nature. 431. 177-81. 10.1038/nature02807.
+<br>
+Puritz, J. B., Hollenbeck, C. M. & Gold, J. R. (2014). dDocent: a RADseq, variant-calling pipeline designed for population genomics of non-model organisms. PeerJ 2, e431. doi:10.7717/peerj.431.
