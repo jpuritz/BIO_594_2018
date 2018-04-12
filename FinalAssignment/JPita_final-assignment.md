@@ -22,12 +22,9 @@ For this study I will analyze ddRAD-seq data for native populations of the Cuban
 -	dDocent: Make a de novo assembly, SNP calling and filtering 
 -	VCFtools: Calculate pairwise Fst among all populations
 -	R packages (pcadapt, adegenet) and STRUCTURE: Generate PCA, DAPC and STRUCTURE plots
-  <br>
-  o	PCA: individual variation
-  <br>
-  o	DAPC: individual variation and possible number of clusters
-  <br>
-  o	STRUCTURE: allele frequencies to generate clusters
+  - PCA: individual variation
+  - DAPC: individual variation and possible number of clusters
+  - STRUCTURE: allele frequencies to generate clusters
 
 ## References
 Kolbe, J., Glor, R., Rodríguez Schettino, L., Chamizo Lara, A., Larson, A., Losos, J. (2004). Genetic variation increases during biological invasion by a Cuban lizard. Nature. 431. 177-81. 10.1038/nature02807.
