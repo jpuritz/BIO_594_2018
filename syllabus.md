@@ -51,7 +51,7 @@ Updated 4/3/2018 and still subject to change
 |4/11/18| Exome Capture and Other Capture Methods, Pool-seq, and Low Coverage Whole Genome Sequencing |Project Plans Due! [Primary Literature](https://github.com/jpuritz/BIO_594_2018/tree/master/Readings/Week%2010%20(4:11:2018))|
 |4/18/18| Final Projects | No Readings|
 |4/25/18| Final Projects | No Readings|
-|5/02/18| Epigenetics and Methylation|| 
+|5/01/18| Epigenetics and Methylation| Guest Lecture by Dr. Hollie Putnam!| 
 ## Grading
 
 ### Class Participation (50%)
