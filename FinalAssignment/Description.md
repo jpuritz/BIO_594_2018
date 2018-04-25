@@ -11,7 +11,7 @@ The final assignment for class is to produce a set of completely open and reprod
 |04/11/18| Project Plan|
 |04/18/18| In class work|
 |04/25/18| In class work|
-|05/2/18| **FINAL PROJECT DUE**|
+|05/09/18| **FINAL PROJECT DUE**|
 
 ## Project Requirements
 
