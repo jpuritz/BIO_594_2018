@@ -52,6 +52,9 @@ Updated 4/3/2018 and still subject to change
 |4/18/18| Final Projects | No Readings|
 |4/25/18| Final Projects | No Readings|
 |5/01/18| Epigenetics and Methylation| Guest Lecture by Dr. Hollie Putnam!| 
+|5/09/18| **FINAL PROJECTS DUE**||
+|5/23/19| **ALL CLASS USER ACCOUNTS DELETED FROM KITT** | Contact Dr. Puritz if you need different arrangements|
+
 ## Grading
 
 ### Class Participation (50%)
