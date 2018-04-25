@@ -143,7 +143,6 @@ ln -s /home/Shared_Data/short_lib/*.R.fq.gz .
 /home/Shared_Data/short_lib/LM_8.F.fq.gz
 
 
-
 #### Step 2: Check Sum of Genome Quebec Data
 Use wget command supplied by GenomeQuebec to  automatically download all data, generate checksum file, and perform checksum.
 
@@ -154,7 +153,8 @@ wget -O - "https://genomequebec.mcgill.ca/nanuqMPS/readsetList?projectId=15565&t
 
 #### Step 3: Initial Raw Data Assessment and Characterization
 1. Read counts
-- Read counts are provided in metadata file and checked using checksum.
+
+Read counts are provided in metadata file and checked using checksum.
 
 2. Read quality of each sample group
 
@@ -243,6 +243,8 @@ for i in ${total_array[@]}; do
   mv ${i} ./natural_pop_files
 done
 
+```
+Run the following script to perform read trimming of HiSeq 2000 adapter, trim low quality ends of reads with a Phred score of less than 20 and remove whole reads with an average score of less than 10.
 
 ```
 #!/usr/bin/bash
@@ -274,19 +276,6 @@ done
 
 ```
 
-
-
-
-
-
-
-
-2. Read trimming for quality
-
-
-
-3. Read Mapping to Reference using BWA memory
-
-
+2. Read Mapping to Reference using BWA memory
 
 
