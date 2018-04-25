@@ -21,9 +21,8 @@ set has been limited to only natural populations from high and low salinity from
 
 
 2. HiSeq Read Set Sequencing Metadata
-
-|Name	    |Run Type	  |Library Source	|Library Type	      |Adaptor	|Read # 	|Number of Bases	|Average Quality |Percent Duplicate|
-|---------|-----------|---------------|-------------------|-------------------------------------|----------------|-----------------|
+| Name	  | Run Type	| Library Source| Library Type	    | Adaptor	| Read # 	| Number of Bases	| Average Quality|Percent Duplicate|
+|---------|-----------|---------------|-------------------|---------|---------|-----------------|----------------|-----------------|
 |CS-1	    |PAIRED_END	|gDNA	          |Shotgun (PCR free)	|LuciGen	|34226714	|9515026492	      |38	             | 5.929           |
 |CS-2	    |PAIRED_END	|gDNA	          |Shotgun (PCR free)	|LuciGen	|36064101	|10891358502	    |37	             | 6.62            |
 |CS-2	    |PAIRED_END	|gDNA	          |Shotgun (PCR free)	|LuciGen	|29122012	|8095919336	      |37	             | 5.535           |
@@ -102,6 +101,7 @@ set has been limited to only natural populations from high and low salinity from
 |SM-7	    |PAIRED_END	|gDNA	          |Shotgun (PCR free)	|LuciGen	|47538272	|14356558144	    |38	             | 8.639           |
 |SM-8	    |PAIRED_END	|gDNA	          |Shotgun (PCR free)	|LuciGen	|35781255	|10805939010	    |38	             | 7.666           |
 |SM-9	    |PAIRED_END	|gDNA	          |Shotgun (PCR free)	|LuciGen	|35628014	|10759660228	    |38	             | 6.895           |
+
 
 #### Step 1: Download and acquire the Data
 
