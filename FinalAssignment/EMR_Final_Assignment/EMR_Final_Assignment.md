@@ -21,6 +21,8 @@ set has been limited to only natural populations from high and low salinity from
 
 
 2. HiSeq Read Set Sequencing Metadata
+
+
 | Name	  | Run Type	| Library Source| Library Type	    | Adaptor	| Read # 	| Number of Bases	| Average Quality | Percent Duplicate |
 |---------|-----------|---------------|-------------------|---------|---------|-----------------|-----------------|-------------------|
 |CS-1	    |PAIRED_END	|gDNA	          |Shotgun (PCR free)	|LuciGen	|34226714	|9515026492	      |38	              | 5.929             |
