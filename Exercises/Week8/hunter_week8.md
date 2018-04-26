@@ -1,4 +1,4 @@
-# ** Week 8 **
+# **Week 8** #
 
     mkdir week8
     ln -s /home/BIO594/Exercises/Week_7and8/simulated/*.fq.gz .
