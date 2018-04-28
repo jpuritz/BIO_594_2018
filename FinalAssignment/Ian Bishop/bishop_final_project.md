@@ -90,6 +90,6 @@ scp -P 2292 ibishop@kitt.uri.edu/~/final_project/raw_fastq/new_fastqc/*multiqc* 
 ```
 
 Pre and Post-Trimming Examples of bp quality, via MultiQC
-![Post-trimming bp quality]BIO_594_2018/FinalAssignment/Ian Bishop/TRIMMED_bp_quality_all_samples.png
+![Post-trimming bp quality](BIO_594_2018/FinalAssignment/Ian Bishop/TRIMMED_bp_quality_all_samples.png)
 
-![Pre-trimming bp quality]BIO_594_2018/FinalAssignment/Ian Bishop/RAW_bp_quality_all_samples.png
+![Pre-trimming bp quality](BIO_594_2018/FinalAssignment/Ian Bishop/RAW_bp_quality_all_samples.png)
