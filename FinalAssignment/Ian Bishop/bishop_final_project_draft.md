@@ -91,13 +91,14 @@ scp -P 2292 ibishop@kitt.uri.edu/~/final_project/raw_fastq/new_fastqc/*multiqc* 
 
 Pre and Post-Trimming Examples of bp quality, via MultiQC
 
+Raw
+![Pre-trimming bp quality](RAW_bp_quality_all_samples.png)
+Trimmed
 ![Post-trimming bp quality](TRIMMED_bp_quality_all_samples.png)
 
-![Pre-trimming bp quality](RAW_bp_quality_all_samples.png)
 
 
-
-## Mapping all (non14) paired end reads
+## Mapping all paired end reads
 
 Map reads --> sams ---> bams ---> grand_bam_list
 
@@ -188,9 +189,9 @@ freebayes -f ref_euk.fa -L sorted_dedup_rg_bams > total_snps.vcf
 # can't get parallel version of freebayes. fix for future use
 #freebayes-parallel <(~/freebayes/scripts/fasta_generate_regions.py ref.fa.fai 100000) 36 -f ref_euk.fa -L sorted_dedup_rg_bams > var.vcf
 
-vcftools --vcf total_snps_bigmed.vcf --remove-indels --recode --recode-INFO-all --out total_snps_med
+vcftools --vcf total_snps.vcf --remove-indels --recode --recode-INFO-all --out total_snps
 
-vcftools --vcf total_snps_med.recode.vcf --max-missing 0.5 --mac 0.03 --minQ 20 --recode --recode-INFO-all --out raw.g5mac3
+vcftools --vcf total_snps.recode.vcf --max-missing 0.5 --mac 0.03 --minQ 20 --recode --recode-INFO-all --out raw.g5mac3
 
 vcftools --vcf raw.g5mac3.recode.vcf --minDP 3 --recode --recode-INFO-all --out raw.g5mac3dp3 
 
@@ -206,11 +207,12 @@ mawk '!/#/' DP3g95maf05.fil1.vcf | wc -l
 
 vcffilter -f "QUAL / DP > 0.25" DP3g95p5maf05.fil1.vcf > DP3g95p5maf05.fil5.vcf
 
+mawk '!/#/' DP3g95maf05.fil5.vcf | wc -l
+
 cut -f8 DP3g95maf05.fil5.vcf | grep -oe "DP=[0-9]*" | sed -s 's/DP=//g' > DP3g95maf05.fil5.DEPTH
 mawk '!/#/' DP3g95maf05.fil5.vcf | cut -f1,2,6 > DP3g95maf05.fil5.vcf.loci.qual
 mawk '{ sum += $1; n++ } END { if (n > 0) print sum / n; }' DP3g95maf05.fil5.DEPTH
-python -c "print int(1952+3*(1952**0.5))"
-paste DP3g95maf05.fil5.vcf.loci.qual DP3g95maf05.fil5.DEPTH | mawk -v x=2084 '$4 > x' | mawk '$3 < 2 * $4' > DP3g95maf05.fil5.lowQDloci
+paste DP3g95maf05.fil5.vcf.loci.qual DP3g95maf05.fil5.DEPTH | mawk -v x=3816 '$4 > x' | mawk '$3 < 2 * $4' > DP3g95maf05.fil5.lowQDloci
 vcftools --vcf DP3g95maf05.fil5.vcf --site-depth --exclude-positions DP3g95maf05.fil5.lowQDloci --out DP3g95maf05.fil5
 cut -f3 DP3g95maf05.fil5.ldepth > DP3g95maf05.fil5.site.depth
 mawk '!/D/' DP3g95maf05.fil5.site.depth | mawk -v x=31 '{print $1/x}' > meandepthpersite
@@ -231,5 +233,15 @@ pause -1
 EOF
 
 vcftools --vcf  DP3g95maf05.fil5.vcf --recode-INFO-all --out DP3g95maf05.FINAL --max-meanDP 102.5 --exclude-positions DP3g95maf05.fil5.lowQDloci --recode 
+
+#filter HWE
+curl -L -O https://github.com/jpuritz/dDocent/raw/master/scripts/filter_hwe_by_pop.pl
+chmod +x filter_hwe_by_pop.pl
+
+vcfallelicprimitives DP3g95maf05.FIL.recode.vcf --keep-info --keep-geno > DP3g95maf05.prim.vcf
+vcftools --vcf DP3g95maf05.prim.vcf --remove-indels --recode --recode-INFO-all --out SNP.DP3g95maf05
+./filter_hwe_by_pop.pl -v SNP.DP3g95maf05.recode.vcf -p popmap -o SNP.DP3g95maf05.HWE -h 0.001
+
+mawk '!/#/' SNP.DP3g95maf05.HWE.recode.vcf | wc -l
 
 ```
