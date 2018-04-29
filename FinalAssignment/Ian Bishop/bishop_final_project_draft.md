@@ -283,19 +283,62 @@ names(outliers) <- c("prob", "log10_PO", "qval", "alpha", "fst")
 #plot Bayescan results, Fst~Log10(PO)
 p1 <- ggplot(outliers, aes(log10_PO, fst)) + 
         geom_point() +
-        theme_bw() +
+       # theme_bw() +
         xlab("Log10(PO)") +
         ylab("Fst")
 
-#export to jpeg
-jpeg("Fst~Log10(PO).jpeg")
+p1
+![BayeScan Outliers](Fst_Log10PO.jpeg)
+
+#export to jpeg; having problems with XQuartz; the following should work locally
+jpeg("Fst_Log10PO.jpeg")
 p1
 dev.off()
 ```
 
 
 PCAdapt to visualize clustering by sampling locality
+#setwd
+
+#Load pcadapt library
+library(pcadapt)
+library(gridExtra)
+
+#load our VCF file into R
+filename <- read.pcadapt("DP3g95maf05.FINAL.recode.vcf", type = "vcf" )
+
+#Create first PCA
+x <- pcadapt(input = filename, K = 20)
+
+#Plot the likelihoods
+plot(x, option = "screeplot")
+
+#Create population designations
+poplist.names <- c("NB","NB","NB","SA","NB","SA","SA","SA","NB","SA","SA","NB","NB","SA","NB","NB","NB","SA","SA","SA","NB","NB","SA","SA","NB","NB","SA","SA","NB","NB","SA","SA","NB","NB","SA")
+
+#Plot the actual PCA (first two PCAs)
+plot(x, option = "scores", pop = poplist.names)
 
 ![PCA Axes 1 & 2](pcadapt_1X2.jpeg)
+
+#Plot PCA with PCA 2 and PCA 3
+plot(x, option = "scores", i = 2, j = 3, pop = poplist.names)
+
 ![PCA Axes 2 & 3](pcadapt_2X3.jpeg)
+
+#Plot PCA with PCA 3 and PCA 4
+plot(x, option = "scores", i = 3, j = 4, pop = poplist.names)
+
 ![PCA Axes 3 & 4](pcadapt_3X4.jpeg)
+
+#this would normally work, but I think the ssh/XQuartz thing is acting up
+jpeg("pcadapt_1X2.jpeg")
+plot(x, option = "scores", pop = poplist.names)
+dev.off()
+jpeg("pcadapt_2X3.jpeg")
+plot(x, option = "scores", i = 2, j = 3, pop = poplist.names)
+dev.off()
+jpeg("pcadapt_3X4.jpeg")
+plot(x, option = "scores", i = 3, j = 4, pop = poplist.names)
+dev.off()
+
