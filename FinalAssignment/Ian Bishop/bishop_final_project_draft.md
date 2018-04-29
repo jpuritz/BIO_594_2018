@@ -281,9 +281,21 @@ outliers <- outliers[,3:7]
 names(outliers) <- c("prob", "log10_PO", "qval", "alpha", "fst")
 
 #plot Bayescan results, Fst~Log10(PO)
-ggplot(outliers, aes(log10_PO, fst)) + 
-  geom_point() +
-  theme_bw() +
-  xlab("Log10(PO)") +
-  ylab("Fst")
+p1 <- ggplot(outliers, aes(log10_PO, fst)) + 
+        geom_point() +
+        theme_bw() +
+        xlab("Log10(PO)") +
+        ylab("Fst")
+
+#export to jpeg
+jpeg("Fst~Log10(PO).jpeg")
+p1
+dev.off()
 ```
+
+
+PCAdapt to visualize clustering by sampling locality
+
+![PCA Axes 1 & 2](pcadapt_1X2.jpeg)
+![PCA Axes 2 & 3](pcadapt_2X3.jpeg)
+![PCA Axes 3 & 4](pcadapt_3X4.jpeg)
