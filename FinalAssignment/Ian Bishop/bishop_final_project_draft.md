@@ -288,6 +288,7 @@ p1 <- ggplot(outliers, aes(log10_PO, fst)) +
         ylab("Fst")
 
 p1
+
 ![BayeScan Outliers](Fst_Log10PO.jpeg)
 
 #export to jpeg; having problems with XQuartz; the following should work locally
@@ -298,6 +299,7 @@ dev.off()
 
 
 PCAdapt to visualize clustering by sampling locality
+```
 #setwd
 
 #Load pcadapt library
@@ -341,4 +343,4 @@ dev.off()
 jpeg("pcadapt_3X4.jpeg")
 plot(x, option = "scores", i = 3, j = 4, pop = poplist.names)
 dev.off()
-
+```
