@@ -1,8 +1,8 @@
 # BIO-594 FINAL PROJECT
-# SNP Calling and Analysis in two populations of the marine diatom <i>Thalassiosira rotula</i>
+# SNP Calling and neutral structure of two populations of the marine diatom <i>Thalassiosira rotula</i>
 
 #### Ian Bishop
-#### April 28, 2018
+#### April 29, 2018
 
 
 ## Preparation of workspace
@@ -12,6 +12,16 @@ These files are required for the following pipeline:
 - popmap (a two column list of sampled individuals (as they are called in the VCF) and which population they belong to)
 - BSsnp.spid
 - plot_R.r 
+
+As are these Puritz scripts:
+
+```
+curl -L -O https://github.com/jpuritz/dDocent/raw/master/scripts/filter_missing_ind.sh
+chmod +x filter_missing_ind.sh
+
+curl -L -O https://github.com/jpuritz/dDocent/raw/master/scripts/filter_hwe_by_pop.pl
+chmod +x filter_hwe_by_pop.pl
+```
 
 Create and Activate a working environment and install the following conda packages:
 
@@ -190,25 +200,32 @@ freebayes -f ref_euk.fa -L sorted_dedup_rg_bams > total_snps.vcf
 # can't get parallel version of freebayes. fix for future use
 #freebayes-parallel <(~/freebayes/scripts/fasta_generate_regions.py ref.fa.fai 100000) 36 -f ref_euk.fa -L sorted_dedup_rg_bams > var.vcf
 
+#remove INDELS
 vcftools --vcf total_snps.vcf --remove-indels --recode --recode-INFO-all --out total_snps
 
+#filter out genotypes found in fewer than 50% of individuals, minor allele count of 3, and lower quality scores
 vcftools --vcf total_snps.recode.vcf --max-missing 0.5 --mac 0.03 --minQ 20 --recode --recode-INFO-all --out raw.g5mac3
 
+#filter out loci with less than depth of 3
 vcftools --vcf raw.g5mac3.recode.vcf --minDP 3 --recode --recode-INFO-all --out raw.g5mac3dp3 
 
-curl -L -O https://github.com/jpuritz/dDocent/raw/master/scripts/filter_missing_ind.sh
-chmod +x filter_missing_ind.sh
+#filter out individuals with lots of missing data
 ./filter_missing_ind.sh raw.g5mac3dp3.recode.vcf raw.g5mac3dplm
 
 vcftools --vcf raw.g5mac3dplm.recode.vcf --max-missing 0.95 --maf 0.05 --recode --recode-INFO-all --out DP3g95maf05 --min-meanDP 20
 
+#filter out loci where alleles frequency is very far from 0.5
 vcffilter -s -f "AB > 0.20 & AB < 0.80 | AB < 0.01" DP3g95maf05.recode.vcf > DP3g95maf05.fil1.vcf
 
+#check current SNP count
 mawk '!/#/' DP3g95maf05.fil1.vcf | wc -l
 
+#drop loci where quality is much greater than depth
 vcffilter -f "QUAL / DP > 0.25" DP3g95p5maf05.fil1.vcf > DP3g95p5maf05.fil5.vcf
 
+#check current SNP count
 mawk '!/#/' DP3g95maf05.fil5.vcf | wc -l
+
 
 cut -f8 DP3g95maf05.fil5.vcf | grep -oe "DP=[0-9]*" | sed -s 's/DP=//g' > DP3g95maf05.fil5.DEPTH
 mawk '!/#/' DP3g95maf05.fil5.vcf | cut -f1,2,6 > DP3g95maf05.fil5.vcf.loci.qual
@@ -235,10 +252,7 @@ EOF
 
 vcftools --vcf  DP3g95maf05.fil5.vcf --recode-INFO-all --out DP3g95maf05.FINAL --max-meanDP 102.5 --exclude-positions DP3g95maf05.fil5.lowQDloci --recode 
 
-#filter HWE
-curl -L -O https://github.com/jpuritz/dDocent/raw/master/scripts/filter_hwe_by_pop.pl
-chmod +x filter_hwe_by_pop.pl
-
+#filter by HWE
 vcfallelicprimitives DP3g95maf05.FIL.recode.vcf --keep-info --keep-geno > DP3g95maf05.prim.vcf
 vcftools --vcf DP3g95maf05.prim.vcf --remove-indels --recode --recode-INFO-all --out SNP.DP3g95maf05
 ./filter_hwe_by_pop.pl -v SNP.DP3g95maf05.recode.vcf -p popmap -o SNP.DP3g95maf05.HWE -h 0.001
@@ -253,7 +267,6 @@ mv SNP.DP3g95maf05.HWE.recode.vcf SNP.DP3g95maf05.HWE.FINAL.vcf
 ## ANALYSIS
 
 Bayescan to visualize putative outliers
-
 
 Some required files to place in your working directory
 
