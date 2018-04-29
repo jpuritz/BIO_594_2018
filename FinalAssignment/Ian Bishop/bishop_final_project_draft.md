@@ -98,10 +98,11 @@ Trimmed
 
 
 
-## Mapping all paired end reads
+## MAP FILTERED READS
 
-Map reads --> sams ---> bams ---> grand_bam_list
-
+I did not assemble myself, as the process of binning and removing large chunks of the dataset was a bit much for me to take on, and the
+top was not one we discussed in class. Instead, a former lab member had already done some heavy lifting to assemble these data with Megahit, 
+and to Blast the resulting contigs to remove those likely not belonging to <i>T. rotula</i>.
 ```
 #index ref
 bwa index ref_euk.fa
@@ -176,7 +177,7 @@ ls *sorted.dedup.rg.bam > sorted_dedup_rg_bams
 ```
 
 
-## Call SNPS, Filter SNPs
+## CALL SNPS, FILTER SNPs
 
 ```
 # create one more index for samtools for ref.euk.fa
@@ -242,6 +243,47 @@ vcfallelicprimitives DP3g95maf05.FIL.recode.vcf --keep-info --keep-geno > DP3g95
 vcftools --vcf DP3g95maf05.prim.vcf --remove-indels --recode --recode-INFO-all --out SNP.DP3g95maf05
 ./filter_hwe_by_pop.pl -v SNP.DP3g95maf05.recode.vcf -p popmap -o SNP.DP3g95maf05.HWE -h 0.001
 
+#how many SNPs in final dataset?
 mawk '!/#/' SNP.DP3g95maf05.HWE.recode.vcf | wc -l
 
+#rename final vcf file
+mv SNP.DP3g95maf05.HWE.recode.vcf SNP.DP3g95maf05.HWE.FINAL.vcf 
+```
+
+## ANALYSIS
+
+Bayescan to visualize putative outliers
+
+
+Some required files to place in your working directory
+
+- popmap
+- BSsnp.spid
+- plot_R.r
+
+```
+#run PGDSpider
+java -jar /usr/local/bin/PGDSpider2-cli.jar -inputfile SNP.DP3g95maf05.HWE.FINAL.vcf -outputfile SNP.DP3g95maf05.HWE.FINAL_BS -spid BSsnp.spid
+
+#run BayeScan
+BayeScan2.1_linux64bits SNP.DP3g95maf05.HWE.FINAL_BS -nbp 30 -thin 20
+
+#start R
+R
+
+#load libraries
+library(ggplot2)
+library(gridExtra)
+
+#input data, organize/rename a bit
+outliers <- read.csv("SNP.DP3g95maf05.HWE.FINA_fst.txt", header=TRUE, sep=" ")
+outliers <- outliers[,3:7]
+names(outliers) <- c("prob", "log10_PO", "qval", "alpha", "fst")
+
+#plot Bayescan results, Fst~Log10(PO)
+ggplot(outliers, aes(log10_PO, fst)) + 
+  geom_point() +
+  theme_bw() +
+  xlab("Log10(PO)") +
+  ylab("Fst")
 ```
