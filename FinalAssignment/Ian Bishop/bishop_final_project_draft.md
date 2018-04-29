@@ -288,9 +288,9 @@ p1 <- ggplot(outliers, aes(log10_PO, fst)) +
         ylab("Fst")
 
 p1
-
+```
 ![BayeScan Outliers](Fst_Log10PO.jpeg)
-
+```
 #export to jpeg; having problems with XQuartz; the following should work locally
 jpeg("Fst_Log10PO.jpeg")
 p1
@@ -320,19 +320,19 @@ poplist.names <- c("NB","NB","NB","SA","NB","SA","SA","SA","NB","SA","SA","NB","
 
 #Plot the actual PCA (first two PCAs)
 plot(x, option = "scores", pop = poplist.names)
-
+```
 ![PCA Axes 1 & 2](pcadapt_1X2.jpeg)
-
+```
 #Plot PCA with PCA 2 and PCA 3
 plot(x, option = "scores", i = 2, j = 3, pop = poplist.names)
-
+```
 ![PCA Axes 2 & 3](pcadapt_2X3.jpeg)
-
+```
 #Plot PCA with PCA 3 and PCA 4
 plot(x, option = "scores", i = 3, j = 4, pop = poplist.names)
-
+```
 ![PCA Axes 3 & 4](pcadapt_3X4.jpeg)
-
+```
 #this would normally work, but I think the ssh/XQuartz thing is acting up
 jpeg("pcadapt_1X2.jpeg")
 plot(x, option = "scores", pop = poplist.names)
