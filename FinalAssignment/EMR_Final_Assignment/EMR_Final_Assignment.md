@@ -104,7 +104,6 @@ set has been limited to only natural populations from high and low salinity from
 |SM-8	    |PAIRED_END	|gDNA	          |Shotgun (PCR free)	|LuciGen	|35781255	|10805939010	    |38	              | 7.666             |
 |SM-9	    |PAIRED_END	|gDNA	          |Shotgun (PCR free)	|LuciGen	|35628014	|10759660228	    |38	              | 6.895             |
 
-
 #### Step 1: Download and acquire the Data
 
 All sequence data has been downloaded onto KITT by JP. To access the data a symbolic link will be created using the following commands.
@@ -217,17 +216,16 @@ Overall the summary statistics indicate _________.
 #### Step 4: Bioinformatic Processing
 
 1. Adaptor trimming using fastqc-mcf
+The user manual for this tool can be found here: https://github.com/ExpressionAnalysis/ea-utils/blob/wiki/FastqMcf.md
 
-User manual: https://github.com/ExpressionAnalysis/ea-utils/blob/wiki/FastqMcf.md
-
-The code below uses a bash loop to first trim adapters. The adapters used for this project were as follows:
+The adapters used for this project for multiplexing on a Hiseq 2000 were as follows:
 
 >Hi_seq_Adaptor_Read_1
 AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC
 >Hi_seq_Adaptor_Read_2
 AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT
 
-Insert the above into new file called Hi_seq_adaptors.fa.
+These sequences were input into a file called Hi_seq_adaptors.fa.
 
 ```
 #create new folder for trimmer files
@@ -236,7 +234,7 @@ mv Hi_seq_adaptors.fa natural
 cd natural_pop_files
 ```
 
-Move all files for use into natural_pop_files folder:
+All files for use were moved into their own natural_pop_files folder:
 
 ```
 declare -a total_array=(./LM*.F.fq.gz ./HC_?.F.fq.gz ./CS*.F.fq.gz ./SM*.F.fq.gz ./HI*.F.fq.gz ./SL*.F.fq.gz ./CL_*.F.fq.gz ./CLP*.F.fq.gz ./HC_VA*.F.fq.gz ./LM*.R.fq.gz ./HC_?.R.fq.gz ./CS*.R.fq.gz ./SM*.R.fq.gz ./HI*.R.fq.gz ./SL*.R.fq.gz ./CL_*.R.fq.gz ./CLP*.R.fq.gz ./HC_VA*.R.fq.gz)
@@ -278,6 +276,97 @@ done
 
 ```
 
-2. Read Mapping to Reference using BWA memory
+# Step 5. Read Mapping to Reference using BWA-MEM
+BWA-MEM is recommended for longer sequences that range from 70bp to 1Mbp. It is recommended over BWA-SW and BWA-backtrak because it is faster and more accurate.
 
+The reference file being used is the eastern oyster reference mRNA from NCBI: GCF_002022765.2_C_virginica-3.0_rna.fna. Using this file means that any aligned genes will have the gene information attached.
+
+1. Set up a reference index using samtools faidx
+
+```
+# create a reference index
+samtools faidx GCF_002022765.2_C_virginica-3.0_rna.fna
+
+```
+Create a bwa index for use by BWA and then use bwa mem to generate sam records for each read and samtools to sort the bam file.
+
+```
+F=/home/eroberts/repos/BIO_594_2018/FinalAssignment/EMR_Final_Assignment/natural_pop_files
+array1=($(ls $F/*_F.fq.gz | sed 's/_F.fq.gz//g'))
+
+bwa index GCF_002022765.2_C_virginica-3.0_rna.fna
+
+for i in ${array1[@]}; do
+  bwa mem GCF_002022765.2_C_virginica-3.0_genomic.fna ${i}_F.fq.gz ${i}_R.fq.gz  -t 8 -a -M -B 3 -O 5 -R "@RG\tID:${i}\tSM:${i}\tPL:Illumina" 2> bwa.${i}.log | samtools view -@4 -q 1 -SbT GCF_002022765.2_C_virginica-3.0_genomic.fna - > ${i}.bam
+  samtools sort -@8 $.bam -o ${i}.bam && samtools index ${i}.bam
+done
+```
+
+# 3. Mark and filter out any potential duplicate reads using PICARD
+Because libraries were generated without a PCR prep, there should not be duplicate reads. However, this serves as a check of this.
+
+```
+# Download the PICARD tool
+wget https://github.com/broadinstitute/picard/releases/download/2.17.8/picard.jar
+
+# Mark and output duplicates
+
+F=/home/eroberts/repos/BIO_594_2018/FinalAssignment/EMR_Final_Assignment/natural_pop_files
+array1=($(ls $F/*.bam| sed 's/.bam//g'))
+
+for i in ${array1[@]; do
+  java -Xms4g -jar picard.jar MarkDuplicatesWithMateCigar I=${i}.bam O=${i}md.bam M=${i}_dup_metrics.txt MINIMUM_DISTANCE=300
+done
+```
+Now we are able to remove duplicates as well as any secondary alignments, mappings with a quality score of less than ten, and reads with more than 80 bp clipped. Finally we can create a BAM index from our fully processed files.
+
+```
+F=/home/eroberts/repos/BIO_594_2018/FinalAssignment/EMR_Final_Assignment/natural_pop_files
+array1=($(ls $F/*md.bam))
+
+for i in ${array1[@]; do
+  samtools view -@8 -h -F 0x100 -q 10 -F 0x400 ${i}md.bam | mawk '$6 !~/[8-9].[SH]/ && $6 !~ /[1-9][0-9].[SH]/'| samtools view -@8 -b > ${i}.F.bam
+  samtools index ${i}.F.bam
+done
+
+```
+The command below can then be used to check that reads have been filtered out.
+
+```
+F=/home/eroberts/repos/BIO_594_2018/FinalAssignment/EMR_Final_Assignment/natural_pop_files
+array1=($(ls $F/*.bam| sed 's/.bam//g'))
+
+for i in ${array1[@]; do
+  paste <(samtools view -c ${i}md.bam) <(samtools view -c ${i}.F.bam )
+done
+```
+
+# 4. Calculate depth per bp along the reference using samtools
+
+The final filtered bam files have now been generated and we can check the sequencing depth per base pair. The output is a text file with three columns. The first column lists the chromosome, the second column is the base pair and the third column is the depth at that base pair.
+
+```
+F=/home/eroberts/repos/BIO_594_2018/FinalAssignment/EMR_Final_Assignment/natural_pop_files
+array1=(ls $F/*.F.bam)
+for i in ${array1[@]; do
+  samtools depth -aa ${i}.F.bam > ${i}.genome.depth
+done
+```
+
+# 5. Perform Variant Calling with FreeBayes
+
+Now that our final bam files have been generated we can call variants using the program FreeBayes.
+
+```
+F=/home/eroberts/repos/BIO_594_2018/FinalAssignment/EMR_Final_Assignment/natural_pop_files
+array1=(ls $F/*.F.bam)
+for i
+freebayes -f GCF_002022765.2_C_virginica-3.0_rna.fna
+
+
+# for the PCAdapt code look at Week 7 lecture code
+
+# Works used for reference:
+http://clavius.bc.edu/~erik/CSHL-advanced-sequencing/freebayes-tutorial.html
+https://github.com/ekg/alignment-and-variant-calling-tutorial
 
