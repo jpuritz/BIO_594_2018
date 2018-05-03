@@ -221,7 +221,7 @@ This graph depicts the number of reads with average quality scores.
 ![Per Sequence Quality Score](https://github.com/jpuritz/BIO_594_2018/blob/master/FinalAssignment/EMR_Final_Assignment/Per_sequence_quality_scores_natural_pops_5_3_18.png "This graph depicts the number of reads with average quality scores.")
 6. Per Sequence GC Content
 This graph depicts the average GC contents of reads and is roughly normally distributed.
-![Per Sequence GC Content](BIO_594_2018/FinalAssignment/EMR_Final_Assignment/EMR_Final_Assignment/https://github.com/jpuritz/BIO_594_2018/blob/master/FinalAssignment/EMR_Final_Assignment/Per_sequence_GC_content_natural_pops_5_3_18.png "This graph depicts the average GC contents of reads and is roughly normally distributed")
+![Per Sequence GC Content](https://github.com/jpuritz/BIO_594_2018/blob/master/FinalAssignment/EMR_Final_Assignment/Per_sequence_GC_content_natural_pops_5_3_18.png "This graph depicts the average GC contents of reads and is roughly normally distributed")
 
 Overall the sequence quality is high and we will proceed with further analysis. 
 
