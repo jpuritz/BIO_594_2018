@@ -214,11 +214,11 @@ scp -P 2292 eroberts@kitt.uri.edu:/home/eroberts/repos/BIO_594_2018/FinalAssignm
 2. % failed: None failed the QC report
 3. % Duplicates: The highest percent duplicates was 12.5%. Most were lower than this.
 4. Mean Quality Score: 105/105 Samples Passed
-![Mean Quality Score](BIO_594_2018/FinalAssignment/EMR_Final_Assignment/EMR_Final_Assignment/Mean_quality_histogram_natural_pops_5_3_18.png "This graph depicts the mean quality score at each position across a read.")
+![Mean Quality Score](https://github.com/jpuritz/BIO_594_2018/blob/master/FinalAssignment/EMR_Final_Assignment/Mean_quality_histogram_natural_pops_5_3_18.png "This graph depicts the mean quality score at each position across a read.")
 5. Per Sequence Quality Score: 105/105 Samples Passed
-![Per Sequence Quality Score](BIO_594_2018/FinalAssignment/EMR_Final_Assignment/EMR_Final_Assignment/Per_sequence_quality_scores_natural_pops_5_3_18.png "This graph depicts the number of reads with average quality scores.")
+![Per Sequence Quality Score](https://github.com/jpuritz/BIO_594_2018/blob/master/FinalAssignment/EMR_Final_Assignment/Per_sequence_quality_scores_natural_pops_5_3_18.png "This graph depicts the number of reads with average quality scores.")
 6. Per Sequence GC Content
-![Per Sequence GC Content](BIO_594_2018/FinalAssignment/EMR_Final_Assignment/EMR_Final_Assignment/Per_sequence_GC_content_natural_pops_5_3_18.png "This graph depicts the average GC contents of reads and is roughly normally distributed")
+![Per Sequence GC Content](BIO_594_2018/FinalAssignment/EMR_Final_Assignment/EMR_Final_Assignment/https://github.com/jpuritz/BIO_594_2018/blob/master/FinalAssignment/EMR_Final_Assignment/Per_sequence_GC_content_natural_pops_5_3_18.png "This graph depicts the average GC contents of reads and is roughly normally distributed")
 
 Overall the sequence quality is high and we will proceed with further analysis. 
 
