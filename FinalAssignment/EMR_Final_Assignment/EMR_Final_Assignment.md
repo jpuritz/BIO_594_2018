@@ -109,40 +109,25 @@ set has been limited to only natural populations from high and low salinity from
 All sequence data has been downloaded onto KITT by JP. To access the data a symbolic link will be created using the following commands.
 
 ```
-ln -s /home/Shared_Data/*.F.fq.gz .
-ln -s /home/Shared_Data/*.R.fq.gz .
-ln -s /home/Shared_Data/short_lib/*.F.fq.gz .
-ln -s /home/Shared_Data/short_lib/*.R.fq.gz .
+# Link to only the natural population files
+cd /home/eroberts/repos/BIO_594_2018/FinalAssignment/EMR_Final_Assignment/natural_pop_files
+
+declare -a forward_array=(/home/Shared_Data/LM*.F.fq.gz /home/Shared_Data/HC_?.F.fq.gz /home/Shared_Data/CS*.F.fq.gz /home/Shared_Data/SM*.F.fq.gz /home/Shared_Data/HI*.F.fq.gz /home/Shared_Data/SL*.F.fq.gz /home/Shared_Data/CL_*.F.fq.gz /home/Shared_Data/CLP*.F.fq.gz /home/Shared_Data/HC_VA*.F.fq.gz)
+
+declare -a reverse_array=(/home/Shared_Data/LM*.R.fq.gz /home/Shared_Data/HC_?.R.fq.gz /home/Shared_Data/CS*.R.fq.gz /home/Shared_Data/SM*.R.fq.gz /home/Shared_Data/HI*.R.fq.gz /home/Shared_Data/SL*.R.fq.gz /home/Shared_Data/CL_*.R.fq.gz /home/Shared_Data/CLP*.R.fq.gz /home/Shared_Data/HC_VA*.R.fq.gz)
+
+for i in ${forward_array[@]}; do
+  ln -s ${i} /home/eroberts/repos/BIO_594_2018/FinalAssignment/EMR_Final_Assignment/natural_pop_files
+done
+
+for i in ${reverse_array[@]}; do
+  ln -s ${i} /home/eroberts/repos/BIO_594_2018/FinalAssignment/EMR_Final_Assignment/natural_pop_files
+done
+
+#check if I have the correct number of sequence Sets
+ls *.fq.gz | wc -l # 106
 
 ```
-
-# Data will be re-downloaded to update those "short lib sequences" which were the following:  
-
-/home/Shared_Data/short_lib/CLP_1.F.fq.gz
-/home/Shared_Data/short_lib/CLP_2.F.fq.gz
-/home/Shared_Data/short_lib/CLP_3.F.fq.gz
-/home/Shared_Data/short_lib/CLP_4.F.fq.gz
-/home/Shared_Data/short_lib/CLP_5.F.fq.gz
-/home/Shared_Data/short_lib/CLP_6.F.fq.gz
-/home/Shared_Data/short_lib/CS_1.F.fq.gz
-/home/Shared_Data/short_lib/CS_2.F.fq.gz
-/home/Shared_Data/short_lib/CS_3.F.fq.gz
-/home/Shared_Data/short_lib/CS_5.F.fq.gz
-/home/Shared_Data/short_lib/CS_7.F.fq.gz
-/home/Shared_Data/short_lib/HC_5.F.fq.gz
-/home/Shared_Data/short_lib/HC_7.F.fq.gz
-/home/Shared_Data/short_lib/HC_VA_1.F.fq.gz
-/home/Shared_Data/short_lib/HC_VA_2.F.fq.gz
-/home/Shared_Data/short_lib/HC_VA_3.F.fq.gz
-/home/Shared_Data/short_lib/HC_VA_4.F.fq.gz
-/home/Shared_Data/short_lib/HC_VA_5.F.fq.gz
-/home/Shared_Data/short_lib/HC_VA_6.F.fq.gz
-/home/Shared_Data/short_lib/LM_1_pool.F.fq.gz
-/home/Shared_Data/short_lib/LM_3.F.fq.gz
-/home/Shared_Data/short_lib/LM_4.F.fq.gz
-/home/Shared_Data/short_lib/LM_7.F.fq.gz
-/home/Shared_Data/short_lib/LM_8.F.fq.gz
-
 
 #### Step 2: Check Sum of Genome Quebec Data
 Use wget command supplied by GenomeQuebec to  automatically download all data, generate checksum file, and perform checksum.
@@ -169,10 +154,10 @@ Use FASTQC to create FASTQC report with:
 
   ```
 # Upload FASTQC environment using conda create
-conda create -n EMR_Final_Assigment fastqc
+conda create -n natural_pop_files fastqc
 
 # Activate the environment
-source activate EMR_Final_Assignment
+source activate natural_pop_files
 
 # Generate sequence quality report for each population using command fastqc
 declare -a pop_array=(./LM*.F.fq.gz ./HC_?.F.fq.gz ./CS*.F.fq.gz ./SM*.F.fq.gz ./HI*.F.fq.gz ./SL*.F.fq.gz ./CL_*.F.fq.gz ./CLP*.F.fq.gz ./HC_VA*.F.fq.gz)
@@ -189,28 +174,53 @@ for i in ${pop_R_array[@]}; do
   echo "finished ${i}" $date
 done
 
-#Check that all files have been completed by comparing arrays with bash
-declare -a total_array=(./LM*.F.fq.gz ./HC_?.F.fq.gz ./CS*.F.fq.gz ./SM*.F.fq.gz ./HI*.F.fq.gz ./SL*.F.fq.gz ./CL_*.F.fq.gz ./CLP*.F.fq.gz ./HC_VA*.F.fq.gz ./LM*.R.fq.gz ./HC_?.R.fq.gz ./CS*.R.fq.gz ./SM*.R.fq.gz ./HI*.R.fq.gz ./SL*.R.fq.gz ./CL_*.R.fq.gz ./CLP*.R.fq.gz ./HC_VA*.R.fq.gz)
-declare -a html_array=(./*.html)
-echo ${total_array[@]} ${html_array[@]} | tr ' ' '\n' | sort | uniq -u
+# Faster approach if all files are in the same folder and can disown the process source
+
+for i in *.fq.qz; do
+  fastqc $i
+done
 
 # Put process into the background using
 ^Z
 bg
 disown -a
 
+# Check that all files have been completed by comparing arrays with bash
+declare -a total_array=(./LM*.F.fq.gz ./HC_?.F.fq.gz ./CS*.F.fq.gz ./SM*.F.fq.gz ./HI*.F.fq.gz ./SL*.F.fq.gz ./CL_*.F.fq.gz ./CLP*.F.fq.gz ./HC_VA*.F.fq.gz ./LM*.R.fq.gz ./HC_?.R.fq.gz ./CS*.R.fq.gz ./SM*.R.fq.gz ./HI*.R.fq.gz ./SL*.R.fq.gz ./CL_*.R.fq.gz ./CLP*.R.fq.gz ./HC_VA*.R.fq.gz)
+for i in ${total_array[@]}; do
+  echo ${i} | sed 's/.fq.gz/_fastqc.html/g' >> total_array.txt
+done
+declare -a total_array=($(cat total_array.txt))
+declare -a html_array=(./*.html)
+echo ${total_array[@]} ${html_array[@]} | tr ' ' '\n' | sort | uniq -u #any left over are those that weren't converted to fastqc
+# Failed to process file HI_2.R.fq.gz. This file is excluded from FASTQC analysis
+
 # use MultiQC to put together all Files
 #make new folder with all Fastqc files
 mkdir fastqc_results
+mv *.zip ./fastqc_results
 cd fastqc_results
 conda install -c bioconda multiqc
-
 multiqc .
-# Export file to folder so you can open it up with .html
 
+# Export file to local folder so you can open it up with .html
+cd /Users/erinroberts/Documents/PHD_coursework_TA/Puritz_pop_gen
+scp -P 2292 eroberts@kitt.uri.edu:/home/eroberts/repos/BIO_594_2018/FinalAssignment/EMR_Final_Assignment/natural_pop_files/fastqc_results/multiqc_report.html .
 ```
 
-Overall the summary statistics indicate _________.
+### MultiQC Results
+
+1. GC content: The GC content was either 35% or 36% across all reads.
+2. % failed: None failed the QC report
+3. % Duplicates: The highest percent duplicates was 12.5%. Most were lower than this.
+4. Mean Quality Score: 105/105 Samples Passed
+![Mean Quality Score](EMR_Final_Assignment/Mean_quality_histogram_natural_pops_5_3_18.png "This graph depicts the mean quality score at each position across a read.")
+5. Per Sequence Quality Score: 105/105 Samples Passed
+![Per Sequence Quality Score](EMR_Final_Assignment/Per_sequence_quality_scores_natural_pops_5_3_18.png "This graph depicts the number of reads with average quality scores.")
+6. Per Sequence GC Content
+![Per Sequence GC Content](EMR_Final_Assignment/Per_sequence_GC_content_natural_pops_5_3_18.png "This graph depicts the average GC contents of reads and is roughly normally distributed")
+
+Overall the sequence quality is high and we will proceed with further analysis. 
 
 
 #### Step 4: Bioinformatic Processing
@@ -227,45 +237,31 @@ AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT
 
 These sequences were input into a file called Hi_seq_adaptors.fa.
 
+
+Install the software fastqc-mcf (from the ea-utils package)
 ```
-#create new folder for trimmer files
-mkdir natural_pop_files
-mv Hi_seq_adaptors.fa natural
-cd natural_pop_files
-```
-
-All files for use were moved into their own natural_pop_files folder:
-
-```
-declare -a total_array=(./LM*.F.fq.gz ./HC_?.F.fq.gz ./CS*.F.fq.gz ./SM*.F.fq.gz ./HI*.F.fq.gz ./SL*.F.fq.gz ./CL_*.F.fq.gz ./CLP*.F.fq.gz ./HC_VA*.F.fq.gz ./LM*.R.fq.gz ./HC_?.R.fq.gz ./CS*.R.fq.gz ./SM*.R.fq.gz ./HI*.R.fq.gz ./SL*.R.fq.gz ./CL_*.R.fq.gz ./CLP*.R.fq.gz ./HC_VA*.R.fq.gz)
-
-for i in ${total_array[@]}; do
-  mv ${i} ./natural_pop_files
-done
-
+#install ea-utils
+conda install -c bioconda ea-utils
 ```
 Run the following script to perform read trimming of HiSeq 2000 adapter, trim low quality ends of reads with a Phred score of less than 20 and remove whole reads with an average score of less than 10.
 
 ```
-#!/usr/bin/bash
 F=/home/eroberts/repos/BIO_594_2018/FinalAssignment/EMR_Final_Assignment/natural_pop_files
-#install fastqc-mcf through ea-utils
-conda install -c bioconda ea-utils
-array1=($(ls $F/*_F.fq.gz | sed 's/_F.fq.gz//g'))
+array1=($(ls $F/*.F.fq.gz | sed 's/.F.fq.gz//g'))
 
 for file in ${array1[@]};do
-/home/erinroberts/miniconda3/bin/fastq-mcf \
+/home/eroberts/miniconda3/bin/fastq-mcf \
 $F/Hi_seq_adaptors.fa\
-$F/${file}_F.fq.gz \
-$F/${file}_R.fq.gz \
+$F/${file}.F.fq.gz \
+$F/${file}.R.fq.gz \
 -l 100 \
 -q 20 \
 -w 5 \
 -x 10 \
 -u \
 -P 33 \
--o $F/${file}_F.cleaned.fq.gz \
--o $F/${file}_R.cleaned.fq.gz &> $F/${file}.log
+-o $F/${file}.F.cleaned.fq.gz \
+-o $F/${file}.R.cleaned.fq.gz &> $F/${file}.trimmed
 done
 
 # o =output
@@ -284,6 +280,8 @@ The reference file being used is the eastern oyster reference mRNA from NCBI: GC
 1. Set up a reference index using samtools faidx
 
 ```
+# copy genome into folder from bluewaves
+scp erin_roberts@bluewaves:/data3/marine_diseases_lab/shared/GCA_002022765.4_C_virginica-3.0_genomic.fna .
 # create a reference index
 samtools faidx GCF_002022765.2_C_virginica-3.0_rna.fna
 
@@ -292,12 +290,12 @@ Create a bwa index for use by BWA and then use bwa mem to generate sam records f
 
 ```
 F=/home/eroberts/repos/BIO_594_2018/FinalAssignment/EMR_Final_Assignment/natural_pop_files
-array1=($(ls $F/*_F.fq.gz | sed 's/_F.fq.gz//g'))
+array1=($(ls $F/*.F.fq.gz | sed 's/.F.fq.gz//g'))
 
 bwa index GCF_002022765.2_C_virginica-3.0_rna.fna
 
 for i in ${array1[@]}; do
-  bwa mem GCF_002022765.2_C_virginica-3.0_genomic.fna ${i}_F.fq.gz ${i}_R.fq.gz  -t 8 -a -M -B 3 -O 5 -R "@RG\tID:${i}\tSM:${i}\tPL:Illumina" 2> bwa.${i}.log | samtools view -@4 -q 1 -SbT GCF_002022765.2_C_virginica-3.0_genomic.fna - > ${i}.bam
+  bwa mem GCF_002022765.2_C_virginica-3.0_genomic.fna ${i}.F.fq.gz ${i}.R.fq.gz  -t 8 -a -M -B 3 -O 5 -R "@RG\tID:${i}\tSM:${i}\tPL:Illumina" 2> bwa.${i}.log | samtools view -@4 -q 1 -SbT GCF_002022765.2_C_virginica-3.0_genomic.fna - > ${i}.bam
   samtools sort -@8 $.bam -o ${i}.bam && samtools index ${i}.bam
 done
 ```
