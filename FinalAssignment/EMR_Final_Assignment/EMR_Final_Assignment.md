@@ -279,7 +279,6 @@ done
 # -x = 'N' bad read percentage causing cycle removal
 
 ```
-
 # Step 5. Read Mapping to Reference using BWA-MEM
 BWA-MEM is recommended for longer sequences that range from 70bp to 1Mbp. It is recommended over BWA-SW and BWA-backtrak because it is faster and more accurate.
 
@@ -290,23 +289,29 @@ The reference file being used is the eastern oyster reference mRNA from NCBI: GC
 ```
 # copy genome into folder from bluewaves
 scp erin_roberts@bluewaves:/data3/marine_diseases_lab/shared/GCA_002022765.4_C_virginica-3.0_genomic.fna .
-# create a reference index
-samtools faidx GCF_002022765.2_C_virginica-3.0_rna.fna
+# create a reference index in samtools
+samtools faidx GCA_002022765.4_C_virginica-3.0_genomic.fna
 
 ```
 Create a bwa index for use by BWA and then use bwa mem to generate sam records for each read and samtools to sort the bam file.
 
+Put the following code into a bash script and run the bash script to execute.
+$ nano bwa.sh
+$ bash bwa.sh
 ```
+#!/bin/bash
 F=/home/eroberts/repos/BIO_594_2018/FinalAssignment/EMR_Final_Assignment/natural_pop_files
-array1=($(ls $F/*.F.fq.gz | sed 's/.F.fq.gz//g'))
+array1=($(ls *.F.cleaned.fq.gz | sed 's/.F.cleaned.fq.gz//g'))
 
-bwa index GCF_002022765.2_C_virginica-3.0_rna.fna
+#bwa index GCA_002022765.4_C_virginica-3.0_genomic.fna
+echo "done index $(date)"
 
 for i in ${array1[@]}; do
-  bwa mem GCF_002022765.2_C_virginica-3.0_genomic.fna ${i}.F.fq.gz ${i}.R.fq.gz  -t 8 -a -M -B 3 -O 5 -R "@RG\tID:${i}\tSM:${i}\tPL:Illumina" 2> bwa.${i}.log | samtools view -@4 -q 1 -SbT GCF_002022765.2_C_virginica-3.0_genomic.fna - > ${i}.bam
-  samtools sort -@8 $.bam -o ${i}.bam && samtools index ${i}.bam
+  bwa mem $F/GCA_002022765.4_C_virginica-3.0_genomic.fna ${i}.F.cleaned.fq.gz ${i}.R.cleaned.fq.gz -t 8 -a -M -B 3 -O 5 -R "@RG\tID:${i}\tSM:${i}\tPL:Illumina" 2> bwa.${i}.log | samtools view -@4 -q 1 -SbT $F/GCA_002022765.4_C_virginica-3.0_genomic.fna - > ${i}.bam
+  echo "done ${i}"
 done
 ```
+
 
 # 3. Mark and filter out any potential duplicate reads using PICARD
 Because libraries were generated without a PCR prep, there should not be duplicate reads. However, this serves as a check of this.
