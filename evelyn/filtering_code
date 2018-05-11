@@ -1,0 +1,61 @@
+#  Bioinformatic code used in filtering raw SNP data 
+
+###  filter out variant calls that below 1% minor allele frequency and not called in 50% individual samples 
+vcftools --vcf TotalRawSNPs.vcf --max-missing 0.5 --maf 0.001 --minQ 20 --recode --recode-INFO-all --out AU
+
+###  change all genotypes with less than 5 reads to missing data
+vcftools --vcf AU.recode.vcf --minDP 5 --recode --recode-INFO-all --out AUdp5
+
+### filter loci that have high missing data values in each  single population.
+./pop_missing_filter.sh AUdp5.recode.vcf popmap 0.5 1 AUdp5p05
+
+### filter out bad individual samples
+filter_missing_ind.sh AUdp5p05.recode.vcf AUdp5p05I
+
+### ddocent filters
+./dDocent_filters AUdp5p05I.recode.vcf AUdp5p05Id
+
+### sepearte SNP and INDEL calls, and then remove INDELs.
+vcfallelicprimitives -k -g AUdp5p05Id.FIL.recode.vcf |sed 's:\.|\.:\.\/\.:g' > AUdp5p05F.prim
+vcftools --vcf AUdp5p05F.prim --recode --recode-INFO-all --remove-indels --out SNP.AUdp5p05F
+
+### filter out loci that are out of HWE in more than half the populations
+filter_hwe_by_pop.pl -v SNP.AUdp5p05F.recode.vcf -p popmap -c 0.5 -out
+
+###  make haplotype calls across RAD loci using both F and R reads and remove loci with high levels of missing data and potential paralogs using the script rad_haplotyper
+rad_haplotyper.pl  -v SNP.AUdp5MIp25g9HWE2a.recode.vcf -p popmap -r reference.fasta -x 10 -mp 5
+cp stats.out stats.out.HF
+mawk '/Missi/' stats.out.HF | mawk '$9 > 30' > HF.missing
+mawk '/para/' stats.out.HF > HF.para
+cat HF.para HF.missing > HF.loci.tofilter
+### use the script remove.bad.hap.loci
+remove.bad.hap.loci.sh HF.loci.tofilter SNP.AUdp5MIp25g9HWE.recode.vcf
+
+### filter with minimum allele frequency of 5%
+vcftools --vcf SNP.AUdp5p05FHWE.recode.vcf --maf 0.05 --recode --recode-INFO-all --out SNP.AUdp5p05FHWEmaf05
+
+### restrict loci to two alleles
+vcftools --vcf SNP.AUdp5p05FHWEmaf05.recode.vcf --max-alleles 2 --recode --recode-INFO-all --out SNP.AUdp5p05FHWE2A
+
+### run bayescan to detect outliers
+### Use PGDSpider to convert SNPs to BayeScan input file.
+java -jar /usr/local/bin/PGDSpider2-cli.jar -inputfile SNP.TRSdp5p05FHWEmaf05.recode.vcf -outputfile SNP.TRSdp5p05FHWEBS -spid BSsnp.spid
+### run bayescan
+'BayeScan2.1_linux64bits SNP.TRSdp5p05FHWEBS -nbp 30 -thin 20 > bs.log'
+
+## this takes time to run , so run at the background 
+'run bayescan at the background'
+'control z, bg, disown -a'
+
+##use a VCFtoOutlierOnly.sh script to detect outliers after bayescan and remove them
+'./VCFtoOutlierOnly.sh SNP.TRSdp5MIp25g9HWEHFvFF.recode.vcf SNP.TRSdp5p05FHWEB_fst.txt 0.1 SNPTRSdp  0.1'
+
+##rerun bayescan to be sure of no outliers.
+
+'vcftools --vcf SNP.TRSdp5MIp25g9HWEHFv.recode.vcf --recode-INFO-all --max-alleles 2 --out SNP.TRSdp5MIp25g9HWEHFv2a --recode'
+
+'rad_haplotyper.pl -v SNP.TRSdp5MIp25g9HWEHFv2a.recode.vcf -p popmap -r reference.fasta -x 15 -mp 5 -g Final_Haps.gen'
+
+
+
+
