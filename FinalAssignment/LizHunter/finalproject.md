@@ -297,7 +297,7 @@ grep "Toxo" sharedseq.tsv > toxoorthogroups.txt
 #Search genes on eupath.db and download GOterms
 #Agbase to convert from GOterms to GOslim
 
-![](/Users/lizhunter/Downloads/image.png)
+![](https://i.imgur.com/Is9Tbd0.png)
 
 ## Virulence Factor Database ##
 1. List of virulence factors from Kegg infectious disease pathway modules
