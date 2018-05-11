@@ -99,7 +99,7 @@ cat *.out > asciapiblast.fasta
 ```
 (in an ideal world with more time, would have remapped all raw reads to these bins with Bowtie then reassembled with trinity)
 
-## Translate with Transdecoder##
+## Translate with Transdecoder ##
 ```
 TransDecoder.LongOrfs -t nephtrinity.fasta
 TransDecoder.Predict -t longest_orfs.cds
