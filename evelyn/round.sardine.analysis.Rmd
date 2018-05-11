@@ -1,0 +1,185 @@
+---
+title: "Analysis of Data for Round sardines"
+output:
+  github: github
+  html_document: default
+  pdf_document: default
+---
+## Packages utilised
+### vcfR
+### readr
+### ggplot2
+### reshape2
+### pegas
+### ape  
+### ade4
+### adegenet
+### poppr
+### readxl
+### readr
+### devtools
+### gstudio
+### hierfstat
+### poppr
+### StAMPP
+### lattice
+### dplyr
+
+
+
+
+```{r include=FALSE}
+library(vcfR)
+library(treemap)
+library(readr)
+require(devtools)
+library(gstudio)
+library(readr)
+library(ggplot2)
+library(reshape2)
+library(pegas)
+library(ape)  
+library(ade4)
+library(adegenet)
+library(diveRsity)
+library(genetics)
+library(hierfstat)
+library(iterators)
+library(poppr)
+library(readxl)
+library(readr)
+library("magrittr")
+library(devtools)
+library(gstudio)
+library("mmod")
+library(readr)
+library(pegas)
+library(ape)  
+library(ade4)
+library(genetics)
+library(hierfstat)
+library(iterators)
+library(poppr)
+library(readxl)
+library(adegenet)
+library(pegas)
+library(StAMPP)
+library(lattice)
+library(ggplot2)
+library(ape)
+library(ggmap)
+library(dplyr)
+library(maps)
+library("devtools")
+library(StAMPP)
+library(lattice)
+library(ape)
+library(ggmap)
+```
+
+### Import data into R
+```{r}
+AU1 <- read.vcfR("~/Desktop/aurita/SNP.AUdp5p05FHWE2Apca.recode.vcf")
+```
+
+### convert dataset into genind objects 
+```{r }
+genindB <- vcfR2genind(AU1)
+strata<- read.table("~/Desktop/S_A.strata.txt", header=TRUE)
+strata_df <- data.frame(strata)
+strata(genindB) <- strata_df
+setPop(genindB) <- ~Population
+```
+
+### Test for  Population Structure
+```{r}
+fstat(genindB)
+wc(genindB)
+```
+
+### Calculating pairwise FST values
+```{r}
+Fst <- pairwise.fst(genindB)
+Fst
+```
+
+### calculate genetic differentiation between pairs of population using genetic distance
+```{r}
+GD <- genet.dist(genindB, method = "WC84")
+GD
+```
+
+### Calculating WC pairwise Fst betwen all pairs of regions using heatmap
+```{r}
+gindF.fst.mat <- pairwise.fst(genindB, pop = strata(genindB)$Population,res.type = "matrix")
+gindF.fst.mat
+reg_names = c("Benin","Ghana","Mauritania","Senegal","Togo")
+colnames(gindF.fst.mat)<- reg_names
+rownames(gindF.fst.mat)<- reg_names
+
+gindF.fst.mat.tri <- gindF.fst.mat
+gindF.fst.mat.tri[lower.tri(gindF.fst.mat, diag=TRUE)] <- NA
+melted <- melt(gindF.fst.mat, na.rm =TRUE)
+par(mfrow=c(2,1))
+ggplot(data = melted, aes(Var2, Var1, fill = value))+ geom_tile(color = "white")+
+  scale_fill_gradient(low = "white", high = "red", name="FST")  +
+  ggtitle(expression(atop("Pairwise FST, WC (1984)", atop(italic("N = 137, L = 9,170"), ""))))+
+  labs( x = "Sampling Site", y = "Sampling Site") +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, size = 6, hjust = 1),axis.text.y = element_text(size = 10)) +
+  coord_fixed()
+
+```
+
+### Principal Component Analysis (PCA)
+```{r}
+X <- tab(genindB, freq = TRUE, NA.method = "mean")
+pca1 <- dudi.pca(X, scale = FALSE, scannf = FALSE, nf = 3)
+barplot(pca1$eig[1:20], main = "PCA eigenvalues", col = heat.colors(50))
+col <- funky(9) 
+s.class(pca1$li, pop(genindB),xax=1,yax=2, col=col, axesell=FALSE, cstar=0, cpoint=2, grid=FALSE)
+```
+
+### Discriminant Analysis of Principal Components(DAPC) plot
+```{r}
+aa.genlightB <- vcfR2genlight(AU1, n.cores=1)
+locNames(aa.genlightB) <- paste(AU1@fix[,1],AU1@fix[,2],sep="_")
+pop(aa.genlightB)<-substr(indNames(aa.genlightB),1,3)
+
+dapcB <- dapc(aa.genlightB, n.pca=13, n.da=2)
+scatter(dapcB,scree.da=TRUE, bg="white", posi.pca="topright", legend=FALSE,
+txt.leg=paste("group", 1:5), col=c("red","blue", "green", "black", "violet"))
+```
+
+### Neighbour Joining Tree plotted with boostrap values
+```{r}
+set.seed(999)
+genindB %>%
+  genind2genpop(pop = ~Population) %>%
+  aboot(cutoff = 50, quiet = TRUE, sample = 54, distance = nei.dist)
+```
+### structure-like plot indicating membership probability of each sample
+```{r}
+dapcB.results <- as.data.frame(dapcB$posterior)
+dapcB.results$pop <- pop(genindB)
+dapcB.results$indNames <- rownames(dapcB.results)
+library(reshape2)
+dapcB.results <- melt(dapcB.results)
+colnames(dapcB.results) <- c("Original_Pop","Sample","Assigned_Pop","Posterior_membership_probability")
+
+p <- ggplot(dapcB.results, aes(x=Sample,y=Posterior_membership_probability, fill=Assigned_Pop))
+p <- p + geom_bar(stat='identity') 
+p <- p + facet_grid(~Original_Pop, scales = "free")
+p <- p + theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 5))
+p
+```
+
+```{r}
+# calculate mean per population
+grouped_data <- group_by(dapcB.results, Original_Pop, Assigned_Pop)
+data_means <- summarise(grouped_data, mean=mean(Posterior_membership_probability))
+# plot means for each original pop colored by assigned pop
+pieB <- ggplot(data_means, aes(x=Original_Pop,y=mean, fill=Assigned_Pop))
+pieB <- pieB + geom_bar(stat='identity') + coord_polar("y",start=0)
+pieB <- pieB + facet_grid(~Original_Pop, scales = "free") + theme(axis.text=element_blank(), axis.ticks=element_blank(), panel.grid = element_blank(), strip.background = element_blank())
+pieB
+```
