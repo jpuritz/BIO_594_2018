@@ -316,7 +316,7 @@ done
 array2=($(ls *.bam | sed 's/.bam//g'))
 
 #now sort the bam files with samtools sort
-for i in ${array2[@]}; do 
+for i in ${array2[@]}; do
   samtools sort -@8 ${i}.bam -o ${i}.bam && samtools index ${i}.bam
 done
 ```
@@ -394,10 +394,7 @@ The following steps were adapted from an excellent protocol developed by Jon Pur
 vcftools --vcf total_ALLPOP.vcf --max-missing 0.5 --mac 3 --minQ 20 --recode --recode-INFO-all --out total_ALLPOP.g5mac3
 
 ```
-This command will list the following output:
-```
 
-```
 2. Getting rid of these first will help speed up this next command, which applies a minimum mean depth and a minimum depth for a genotype call. Genotypes will be called if they have atleast three reads.
 
 ```
@@ -531,46 +528,173 @@ Now we can apply a SNP filter. We will choose to use the default Hardy Weinberg 
 
 We now have our final filtered SNP calls that we are confident about!
 
-# STEP 10: Analyses to characterize neutral genomic variations
+# STEP 12: Analyses to characterize neutral genomic variations
 
 1. Calculate the total number of variants and the number of variants within each population
 
+We can do this by using vcf-annotate with --fill-type
 ```
+zcat SNP.DP3g95p5maf05.recode.vcf | vcf-annotate --fill-type | grep -oP "TYPE=\w+" | sort | uniq -c > VCF_filltype
+
+grep "snp" VCF_filltype > SNP_VCF_filltype
+```
+
+To calculate the number of unique variants we can use vcf-contrast from VCFTools. This argument is useful for looking at differences between groups of samples.
+```
+# the -n option will only print novel alleles
+#the sort option will sort the  sites by the confidence of the site being different from the child (-k5,5nr)
+vcf-contrast -n +Child -Mother,Father -d 10 -f | vcf-query -f '%CHROM %POS\t%INFO/NOVELTY\t%INFO/NOVELAL\t%INFO/NOVELGT[\t%SAMPLE %GTR %PL]\n' | sort -k3,3nr | head
 
 ```
 
 2. Calculating allele frequencies and the percentage of exclusive variants
 
-Exclusive variants are defined as those that are polymorphic in only one population.
+2a. Calculate allele frequency
+```
+# To get the frequency of each allele over all individuals in a VCF file, you can use the -freq argument
+vcftools --vcf SNP.DP3g95p5maf05.recode.vcf --freq --out allele_freq_all
+
+# To calculate for individual populations
+
+array3=($(ls *.keep | sed 's'/.keep//')
+for i in ${array3[@]}; do
+  vcftools --vcf SNP.DP3g95p5maf05.recode.vcf--freq --keep ${i}.keep --out ${i}.allele_freq
+done
+
+```
+2b. Exclusive variants are defined as those that are polymorphic in only one population.
 We will do this using the vcftools module vcf-compare
+
+```
+#compare the vcf files using the -g option to also output summary stats
+vcf-compare -H -g A.vcf.gz B.vcf.gz C.vcf.gz
+```
 
 3. Calculate the level of nucleotide diversity using VCFTools
 
 -3a: Calculate for each population separately
+In order to reduce the computational intensity the sliding window has been set to 10,000.
 ```
 array3=($(ls *.keep | sed 's'/.keep//')
 for i in ${array3[@]}; do
-  vcftools --gzvcf SNP.DP3g95p5maf05.recode.vcf  --keep ${i}.keep --window-pi 100000 --out = ${i.ND}
+  vcftools --vcf SNP.DP3g95p5maf05.recode.vcf  --keep ${i}.keep --window-pi 100000 --out = ${i.ND}
 done
 ```
 
--3b: average over all the variants for which an individual had a genotype
-
-4. Calculate pairwise linkage disequilibrium via the correlation coefficient in VCFTools
-
--LD will be estimated using the the whole set of reliable variants. 
-```
-vcftools --gzvcf Massoko_Dryad_VCF_final_subset_noIndels.vcf.gz --keep littoral.txt --ld-window-bp 500000 --chr scaffold_0 --hap-r2 --out littoral_scaffold_0_ld --min-r2 0.001
-
+-3b: Use R to calculate a mean pi for all individuals
 
 ```
+install.packages("fields")
+library(fields)
+binstats <- stats.bin(dat$POS,dat$PI,N=100)
+matplot( binstats$centers, t(binstats$stats[ c("mean", "median","Q1", "Q3"),]), type="l",lty=c(1,2,2,2), col=c('red','blue','green','purple'), ylab="Pi diversity")
+```
 
-# STEP 11: Assess genetic structure by using a PCA through the package adegenet
+4. Calculate pairwise linkage disequilibrium in VCFTools across populations
+
+The following code will calculate the pairwise linkage disequilibrium for each population by calling the argument `--hap-r2`.
+I will use the argument --weir-fst-pop followed by a file listing the individuals in each population to compare all nine populations. In ordr to reduce the computational intensity the sliding window has been set to only compare sites within 50,000 base pairs of one another. We will also set the minimum R-squared value to be 0.001.
+
+```
+vcftools --vcf SNP.DP3g95p5maf05.recode.vcf --hap-r2 --ld-window-bp 500000 --out ld_window_50000 --min-r2 0.001
+```
+
+# STEP 13: Calculate the Fst across different populations
+
+Now we will calculate the Fst statistic between individuals of different populations to get a measure of population differentiation.
+```
+vcftools --vcf SNP.DP3g95p5maf05.recode.vcf --weir-fst-pop CL.txt --weir-fst-pop CLP.txt --weir-fst-pop CS.txt --weir-fst-pop HC.txt --weir-fst-pop HC_VA.txt --weir-fst-pop HI.txt --weir-fst-pop LM.txt --weir-fst-pop SL.txt --weir-fst-pop SM.txt --out Fst_all_pop
 
 
-# STEP 12: Use PCAdapt to visualize sample clustering my population location
+```
 
-  # for the PCAdapt code look at Week 7 lecture code
+# STEP 14: Assess genetic structure by using a PCA through the package adegenet
+
+To carry out the code below, we need to first create a "strata" file that has three columns. The first column is the name of the individual, the second is the population, and the third is the library. We have the first two columns already in our popmap_final_TD file (though with no headings).
+
+We can add on the library type (libraryA) with the following commands
+
+```
+#create file with repeated word with same number of lines as popmap file
+printf 'LibA\n%.0s' {1..54}
+
+#paste the two together
+paste popmap_final_TD libfile > strata
+
+```
+Now we can add plot our data using adegenet in R. 
+
+```
+library(adegenet)
+library(vcfR)
+library(hierfstat)
+library(ape)
+
+#loading in the vcf file
+oyster_vcf <- read.vcfR("SNP.DP3g95p5maf05.recode.vcf")
+
+# the genind object store allelic data for individuals as integer allele counts
+oyster_genind <- vcfR2genind(oyster_vcf)
+strata<- read.table("strata", header=TRUE)
+strata_df <- data.frame(strata)
+strata(oyster_genind) <- strata_df
+
+setPop(oyster_genind) <- ~Population
+
+#Test Population Structure
+fstat(oyster_genind)
+
+oyster.pairwiseFst <- pairwise.fst(oyster_genind, res.type="matrix")
+
+#We can use these genetic distance values to calculate a tree using ape
+oyster.tree <- nj(oyster.pairwiseFst)
+plot(oyster.tree, type="unr", tip.col=funky(nPop(oyster_genind)), font=2)
+annot <- round(oyster.tree$edge.length,2)
+edgelabels(annot[annot>0], which(annot>0), frame="n")
+add.scale.bar()
+
+```
+
+
+# STEP 15: Use PCAdapt to visualize sample clustering my population location
+
+We will now use PCAdapt to plot clustering of populations in R.
+
+```
+R
+library(pcadapt)
+variants <- read.pcadapt("SNP.DP3g95p5maf05.recode.vcf", type = "vcf")
+
+#In this first step pick a minimum number of possible PCs, we'll go high with 20
+PCs <- pcadapt(input = filename, K = 20)
+
+#Now we will plot the percentage of variance explained by each PC using a screeplot
+plot(PCs, option = "screeplot")
+
+#plot for the fist ten
+plot(PCs, option = "screeplot", K = 10)
+
+# Create list with population designations
+poplist.names <- c(rep("CL", 20),rep("CLP", 20),rep("CS", 20), rep("HC,20)),
+rep("HC_VA", 20), rep("HI", 20), rep("LM", 20), rep("SL", 20), rep("SM", 20))
+
+#Display individual scores on each of the PCs and produce a score plot
+plot(PCs, option = "scores", pop = poplist.names)
+#try 2 and 3
+plot(PCs, option = "scores", i = 2, j = 3, pop = poplist.names)
+#try 3 and 4
+plot(PCs, option = "scores", i = 2, j = 3, pop = poplist.names)
+
+# redo with appropriate number of PCs
+PC2<- pcadapt(variants, K=3)
+
+#output the summary statistics
+summary(PC2)
+
+#putatively investigate outliers with a Manhattan plot
+plot(PC2, option="manhattan")
+
+```
 
 # Works used for reference:
 ### References
@@ -583,3 +707,9 @@ https://hbctraining.github.io/In-depth-NGS-Data-Analysis-Course/sessionVI/lesson
 https://ucdavis-bioinformatics-training.github.io/2017-August-Variant-Analysis-Workshop/wednesday/variant_calling.html
 http://ddocent.com/filtering/
 http://angus.readthedocs.io/en/2016/pop_gen_tutorial.html
+https://github.com/alexharkess
+http://www.mountainmanmaier.com/software/pop_genom/#search-for-outliers-with-pcadapt
+https://vcftools.github.io/documentation.html
+http://vcftools.sourceforge.net/perl_module.html#vcf-isec
+http://adegenet.r-forge.r-project.org/files/PRstats/practical-MVAintro.1.0.pdf
+
