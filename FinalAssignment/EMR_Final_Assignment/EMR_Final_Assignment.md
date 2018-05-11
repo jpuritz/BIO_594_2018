@@ -228,7 +228,8 @@ This graph depicts the number of reads with average quality scores.
 This graph depicts the average GC contents of reads and is roughly normally distributed.
 ![Per Sequence GC Content](https://github.com/jpuritz/BIO_594_2018/blob/master/FinalAssignment/EMR_Final_Assignment/Per_sequence_GC_content_natural_pops_5_3_18.png "This graph depicts the average GC contents of reads and is roughly normally distributed")
 
-Overall the sequence quality is high and we will proceed with further analysis. 
+
+Overall the sequence quality is high and we will proceed with further analysis.
 
 
 #### Step 4: Bioinformatic Processing
@@ -254,23 +255,23 @@ conda install -c bioconda ea-utils
 Run the following script to perform read trimming of HiSeq 2000 adapter, trim low quality ends of reads with a Phred score of less than 20 and remove whole reads with an average score of less than 10.
 
 ```
-F=/home/eroberts/repos/BIO_594_2018/FinalAssignment/EMR_Final_Assignment/natural_pop_files
-array1=($(ls $F/*.F.fq.gz | sed 's/.F.fq.gz//g'))
-
-for file in ${array1[@]};do
+sh -c 'for file in "CL_1" "CL_2" "CL_3" "CL_4" "CL_5" "CL_6" "CLP_1" "CLP_2" "CLP_3" "CLP_4" "CLP_5" "CLP_6" "CS_1" "CS_2" "CS_3" "CS_5" "CS_6" "CS_7" "HC_1" "HC_3" "HC_4" "HC_5" "HC_6" "HC_7" "HC_VA_1" "HC_VA_2" "HC_VA_3" "HC_VA_4" "HC_VA_5" "HC_VA_6" "HI_1" "HI_2" "HI_3" "HI_4" "HI_5" "HI_6" "LM_1_pool" "LM_3" "LM_4" "LM_7" "LM_8" "SL_1" "SL_2" "SL_3" "SL_4" "SL_5" "SL_6" "SM_10" "SM_11" "SM_12" "SM_7" "SM_8" "SM_9"
+do
+echo "start ${file} $(date)"
 /home/eroberts/miniconda3/bin/fastq-mcf \
-$F/Hi_seq_adaptors.fa\
-$F/${file}.F.fq.gz \
-$F/${file}.R.fq.gz \
+/home/eroberts/repos/BIO_594_2018/FinalAssignment/EMR_Final_Assignment/natural_pop_files/Hi_seq_adaptors.fa \
+/home/eroberts/repos/BIO_594_2018/FinalAssignment/EMR_Final_Assignment/natural_pop_files/${file}.F.fq.gz \
+/home/eroberts/repos/BIO_594_2018/FinalAssignment/EMR_Final_Assignment/natural_pop_files/${file}.R.fq.gz \
 -l 100 \
 -q 20 \
 -w 5 \
 -x 10 \
 -u \
 -P 33 \
--o $F/${file}.F.cleaned.fq.gz \
--o $F/${file}.R.cleaned.fq.gz &> $F/${file}.trimmed
-done
+-o /home/eroberts/repos/BIO_594_2018/FinalAssignment/EMR_Final_Assignment/natural_pop_files/${file}.F.cleaned.fq.gz \
+-o /home/eroberts/repos/BIO_594_2018/FinalAssignment/EMR_Final_Assignment/natural_pop_files/${file}.R.cleaned.fq.gz &> /home/eroberts/repos/BIO_594_2018/FinalAssignment/EMR_Final_Assignment/natural_pop_files/${file}.log
+echo "${file} done $(date)"
+done'
 
 # o =output
 # l = minumum remaining sequence Length
@@ -279,6 +280,7 @@ done
 # -x = 'N' bad read percentage causing cycle removal
 
 ```
+
 # Step 5. Read Mapping to Reference using BWA-MEM
 BWA-MEM is recommended for longer sequences that range from 70bp to 1Mbp. It is recommended over BWA-SW and BWA-backtrak because it is faster and more accurate.
 
@@ -310,10 +312,16 @@ for i in ${array1[@]}; do
   bwa mem $F/GCA_002022765.4_C_virginica-3.0_genomic.fna ${i}.F.cleaned.fq.gz ${i}.R.cleaned.fq.gz -t 8 -a -M -B 3 -O 5 -R "@RG\tID:${i}\tSM:${i}\tPL:Illumina" 2> bwa.${i}.log | samtools view -@4 -q 1 -SbT $F/GCA_002022765.4_C_virginica-3.0_genomic.fna - > ${i}.bam
   echo "done ${i}"
 done
+
+array2=($(ls *.bam | sed 's/.bam//g'))
+
+#now sort the bam files with samtools sort
+for i in ${array2[@]}; do 
+  samtools sort -@8 ${i}.bam -o ${i}.bam && samtools index ${i}.bam
+done
 ```
 
-
-# 3. Mark and filter out any potential duplicate reads using PICARD
+# STEP 6. Mark and filter out any potential duplicate reads using PICARD
 Because libraries were generated without a PCR prep, there should not be duplicate reads. However, this serves as a check of this.
 
 ```
@@ -323,20 +331,20 @@ wget https://github.com/broadinstitute/picard/releases/download/2.17.8/picard.ja
 # Mark and output duplicates
 
 F=/home/eroberts/repos/BIO_594_2018/FinalAssignment/EMR_Final_Assignment/natural_pop_files
-array1=($(ls $F/*.bam| sed 's/.bam//g'))
+array1=($(ls *.bam| sed 's/.bam//g'))
 
-for i in ${array1[@]; do
-  java -Xms4g -jar picard.jar MarkDuplicatesWithMateCigar I=${i}.bam O=${i}md.bam M=${i}_dup_metrics.txt MINIMUM_DISTANCE=300
+for i in ${array1[@]}; do
+  java -Xms4g -jar picard.jar MarkDuplicatesWithMateCigar I=${i}.bam O=${i}.md.bam M=${i}_dup_metrics.txt MINIMUM_DISTANCE=300
 done
 ```
 Now we are able to remove duplicates as well as any secondary alignments, mappings with a quality score of less than ten, and reads with more than 80 bp clipped. Finally we can create a BAM index from our fully processed files.
 
 ```
 F=/home/eroberts/repos/BIO_594_2018/FinalAssignment/EMR_Final_Assignment/natural_pop_files
-array1=($(ls $F/*md.bam))
+array1=($(ls *.md.bam | sed 's/.md.bam//g'))
 
 for i in ${array1[@]; do
-  samtools view -@8 -h -F 0x100 -q 10 -F 0x400 ${i}md.bam | mawk '$6 !~/[8-9].[SH]/ && $6 !~ /[1-9][0-9].[SH]/'| samtools view -@8 -b > ${i}.F.bam
+  samtools view -@8 -h -F 0x100 -q 10 -F 0x400 ${i}.md.bam | mawk '$6 !~/[8-9].[SH]/ && $6 !~ /[1-9][0-9].[SH]/'| samtools view -@8 -b > ${i}.F.bam
   samtools index ${i}.F.bam
 done
 
@@ -345,39 +353,233 @@ The command below can then be used to check that reads have been filtered out.
 
 ```
 F=/home/eroberts/repos/BIO_594_2018/FinalAssignment/EMR_Final_Assignment/natural_pop_files
-array1=($(ls $F/*.bam| sed 's/.bam//g'))
+array1=($(ls *.md.bam | sed 's/.md.bam//g'))
 
 for i in ${array1[@]; do
-  paste <(samtools view -c ${i}md.bam) <(samtools view -c ${i}.F.bam )
+  paste <(samtools view -c ${i}.md.bam) <(samtools view -c ${i}.F.bam )
 done
 ```
 
-# 4. Calculate depth per bp along the reference using samtools
+# STEP 7. Calculate depth per bp along the reference using samtools
 
 The final filtered bam files have now been generated and we can check the sequencing depth per base pair. The output is a text file with three columns. The first column lists the chromosome, the second column is the base pair and the third column is the depth at that base pair.
 
 ```
 F=/home/eroberts/repos/BIO_594_2018/FinalAssignment/EMR_Final_Assignment/natural_pop_files
-array1=(ls $F/*.F.bam)
+array1=(ls *.F.bam | sed 's/.F.bam//g')
 for i in ${array1[@]; do
   samtools depth -aa ${i}.F.bam > ${i}.genome.depth
 done
 ```
 
-# 5. Perform Variant Calling with FreeBayes
+# STEP 8. Perform Variant Calling with FreeBayes,
 
-Now that our final bam files have been generated we can call variants using the program FreeBayes.
+Now that our final .bam files have been generated we can call variants using the program FreeBayes. Variants can be called for files individually or jointly.
 
 ```
-F=/home/eroberts/repos/BIO_594_2018/FinalAssignment/EMR_Final_Assignment/natural_pop_files
-array1=(ls $F/*.F.bam)
-for i
-freebayes -f GCF_002022765.2_C_virginica-3.0_rna.fna
+cd home/eroberts/repos/BIO_594_2018/FinalAssignment/EMR_Final_Assignment/natural_pop_files
+#give FreeBayes a list of all the input files and call them jointly
+ls *.F.bam > bamlist.txt
+freebayes -f GCF_002022765.2_C_virginica-3.0_rna.fna -L bamlist.txt >  total_SNPs_ALLPOP.vcf
+
+```
+
+# STEP 9. Filter SNPs using VCFTools
+
+The following steps were adapted from an excellent protocol developed by Jon Puritz. For more detailed information please see [http://ddocent.com/filtering/](http://ddocent.com/filtering/)
+
+1. First we will use VCFTools to filter out any variants that have not been successfully genotyped to more than 50% of individuals ( `--max-missing 0.5`), those with a minor allele count of 3 (`--mac 3)`), and those with a quality score below 30 (`--minQ 30`)  
+
+```
+vcftools --vcf total_ALLPOP.vcf --max-missing 0.5 --mac 3 --minQ 20 --recode --recode-INFO-all --out total_ALLPOP.g5mac3
+
+```
+This command will list the following output:
+```
+
+```
+2. Getting rid of these first will help speed up this next command, which applies a minimum mean depth and a minimum depth for a genotype call. Genotypes will be called if they have atleast three reads.
+
+```
+vcftools --vcf total_ALLPOP.firstfilter.recode.vcf --minDP 3 --recode --recode-INFO-all --out total_ALLPOP.g5mac3dp3
+```
+
+3. Now we can remove individuals that have a lot of missing data.
+
+```
+# The output of this file will be called out.imiss
+vcftools --vcf total_ALLPOP.g5mac3dp3.recode.vcf --missing-indv
+
+```
+4. We can now plot a histogram of individuals that are missing a lot of data using the following command (taken from http://ddocent.com/filtering/ by Jon Puritz).
+
+```
+mawk '!/IN/' out.imiss | cut -f5 > totalmissing
+gnuplot << \EOF
+set terminal dumb size 120, 30
+set autoscale
+unset label
+set title "Histogram of % missing data per individual"
+set ylabel "Number of Occurrences"
+set xlabel "% of missing data"
+#set yr [0:100000]
+binwidth=0.01
+bin(x,width)=width*floor(x/width) + binwidth/2.0
+plot 'totalmissing' using (bin($1,binwidth)):(1.0) smooth freq with boxes
+pause -1
+EOF
+```
+5. We can create a list with more than 50% missing data using the following mawk command.
+```
+mawk '$5 > 0.5' out.imiss | cut -f1 > lowDP.indv
+```
+6. This can then be piped into VCFtools so that the low coverage individuals can be removed.
+```
+vcftools --vcf total_ALLPOP.g5mac3dp3.recode.vcf --remove lowDP.indv --recode --recode-INFO-all --out total_ALLPOP.g5mac3dp3dplm
+
+```
+7. Next, we need to restrict the data to those variants that are called in a high percentage of individuals using a genotype call rate of 95% (`--max-missing 0.95`) and then filter based on the mean depth of genotypes of 20% (`--min-meanDP 20`).
+```
+vcftools --vcf total_ALLPOP.g5mac3dp3dplm.recode.vcf --max-missing 0.95 --maf 0.05 --recode --recode-INFO-all --out total_ALLPOPDP3g95maf05 --min-meanDP 20
+```
+
+8. Finally, because we are analyzing several individuals, we need to apply a population specific filter. To do this we first need to create what's called a "popmap" file. This file contains two tab separated columns. Lets create one based on our data.
+
+```
+array2=($(ls *.F.cleaned.fq.gz | sed 's/.F.cleaned.fq.gz//g'))
+
+for i in ${array2[@]}; do
+  echo -e "${i}:${i}" | awk  '{gsub(":","\t",$0); print;}' >> popmap
+done
+awk '{split($2,a,/_/);$2=a[1]}1' popmap > popmap_final  
+sed 's/ /\t/g' popmap_final > popmap_final_TD
+
+#note: manually added _VA to HC_VA lines using nano
+```
+8a. Now we need to create 9 lists that have the individual names of each population. We can do this with the following commands that can be used for whatever the unique names of your populations might be.
+
+```
+cut -f 2 popmap_final_TD | sort | uniq > unique.txt
+
+#!/bin/bash
+while read -r i; do
+  echo $i > $i.keep
+done < unique.txt
+
+```  
+8b. We can use these files to estimate the missing data for loci in each population using vcftools.
+
+```
+array3=($(ls *.keep | sed 's'/.keep//')
+for i in ${array3[@]}; do
+  vcftools --vcf total_ALLPOP.DP3g95maf05.recode.vcf --keep ${i}.keep --missing-site --out ${i}
+done
+```
+8c. The output of the above commands outputs files called `*.lmiss` whose last column lists the percentage of missing data for that locus. We can merge all of these files to create a list of loci that have 10% missing data or more to remove.
+
+```
+cat CL.lmist CLP.lmiss CS.lmiss HC.lmiss HC_VA.lmiss HI.lmiss LM.lmiss SL.lmiss SM.lmiss | mawk '!/CHR/' | mawk '$6 > 0.1' | cut -f1,2 >> badloci
+
+```
+8d. Finally, we can pipe this back into VCFTools to remove any of those bad loci
+
+```
+vcftools --vcf total_ALLPOP.DP3g95maf05.recode.vcf --exclude-positions badloci --recode --recode-INFO-all --out total_ALLPOP.DP3g95p5maf05
+
+```
+9. Next we can apply a filter that remove sites that have reads from both strands. The filter command is going to keep loci that have over 100 times more forward alternate reads than reverse alternate reads and 100 times more forward reference reads than reverse reference reads along with the reciprocal.
+
+```
+vcffilter -f "SAF / SAR > 100 & SRF / SRR > 100 | SAR / SAF > 100 & SRR / SRF > 100" -s total_ALLPOP.DP3g95p5maf05.recode.vcf > total_ALLPOP.DP3g95p5maf05.fil1.vcf
+
+# To investigate how many reads were remove we can see how many lines remain
+mawk '!/#/' total_ALLPOP.DP3g95p5maf05.fil1.vcf | wc -l
+
+```
+10. Apply a filter to account for high coverage causing an inflated locus quality score
+
+Heng Li found that in whole genome samples, high coverage can lead to inflated locus quality scores. Based on this, Jon Purtiz suggests the following filter to remove any locus that has a quality score below 1/4 of the depth. Because we are not working with RADseq data, we will not implement the second filter he suggest to recalculate mean depth.
+
+```
+vcffilter -f "QUAL / DP > 0.25" total_ALLPOP.DP3g95p5maf05.fil1.vcf > total_ALLPOP.DP3g95p5maf05.fil2.vcf
+```
+
+11. Apply a filter for HWE
+
+Hardy Weinberg equilibrium is also another excellent filter to remove erroneous variant calls. To do this I will implement a script written by Chris Hollenbeck
+
+```
+curl -L -O https://github.com/jpuritz/dDocent/raw/master/scripts/filter_hwe_by_pop.pl
+chmod +x filter_hwe_by_pop.pl
+```
+We can first filter by population specific HWE. To do this we need to convert our variant calls to SNPS using vcflib. The following command will do that for us.
+
+```
+vcfallelicprimitives total_ALLPOP.DP3g95p5maf05.fil2.vcf --keep-info --keep-geno > SNP.total_ALLPOP.DP3g95p5maf05.fil2.prim.vcf
+```
+
+Next, the command below will split the variant calls into SNP and indel genotypes.
+```
+vcftools --vcf SNP.total_ALLPOP.DP3g95p5maf05.fil2.prim.vcf --remove-indels --recode --recode-INFO-all --out SNP.DP3g95p5maf05
+```
+
+Now we can apply a SNP filter. We will choose to use the default Hardy Weinberg p-value of 0.001.
+
+```
+./filter_hwe_by_pop.pl -v SNP.DP3g95p5maf05.recode.vcf -p popmap_final_TD -o SNP.DP3g95p5maf05.HWE -h 0.001
+```
+
+We now have our final filtered SNP calls that we are confident about!
+
+# STEP 10: Analyses to characterize neutral genomic variations
+
+1. Calculate the total number of variants and the number of variants within each population
+
+```
+
+```
+
+2. Calculating allele frequencies and the percentage of exclusive variants
+
+Exclusive variants are defined as those that are polymorphic in only one population.
+We will do this using the vcftools module vcf-compare
+
+3. Calculate the level of nucleotide diversity using VCFTools
+
+-3a: Calculate for each population separately
+```
+array3=($(ls *.keep | sed 's'/.keep//')
+for i in ${array3[@]}; do
+  vcftools --gzvcf SNP.DP3g95p5maf05.recode.vcf  --keep ${i}.keep --window-pi 100000 --out = ${i.ND}
+done
+```
+
+-3b: average over all the variants for which an individual had a genotype
+
+4. Calculate pairwise linkage disequilibrium via the correlation coefficient in VCFTools
+
+-LD will be estimated using the the whole set of reliable variants. 
+```
+vcftools --gzvcf Massoko_Dryad_VCF_final_subset_noIndels.vcf.gz --keep littoral.txt --ld-window-bp 500000 --chr scaffold_0 --hap-r2 --out littoral_scaffold_0_ld --min-r2 0.001
 
 
-# for the PCAdapt code look at Week 7 lecture code
+```
+
+# STEP 11: Assess genetic structure by using a PCA through the package adegenet
+
+
+# STEP 12: Use PCAdapt to visualize sample clustering my population location
+
+  # for the PCAdapt code look at Week 7 lecture code
 
 # Works used for reference:
+### References
+Benjelloun, Badr, et al. "Characterizing neutral genomic diversity and selection signatures in indigenous populations of Moroccan goats (Capra hircus) using WGS data." Frontiers in genetics 6 (2015): 107.
+Gómez-Chiarri, M., W. C. Warren, X. Guo, and D. Proestou. 2015. Developing tools for the study of molluscan immunity: The sequencing of the genome of the eastern oyster, Crassostrea virginica. Fish Shellfish Immunol. 46:2–4.
+
 http://clavius.bc.edu/~erik/CSHL-advanced-sequencing/freebayes-tutorial.html
 https://github.com/ekg/alignment-and-variant-calling-tutorial
-
+https://hbctraining.github.io/In-depth-NGS-Data-Analysis-Course/sessionVI/lessons/02_variant-calling.html
+https://ucdavis-bioinformatics-training.github.io/2017-August-Variant-Analysis-Workshop/wednesday/variant_calling.html
+http://ddocent.com/filtering/
+http://angus.readthedocs.io/en/2016/pop_gen_tutorial.html
