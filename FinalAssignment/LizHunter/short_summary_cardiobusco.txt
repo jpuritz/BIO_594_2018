@@ -1,0 +1,15 @@
+# BUSCO version is: 2.0 
+# The lineage dataset is: alveolata_stramenophiles_ensembl (Creation date: 2016-11-15, number of species: 24, number of BUSCOs: 234)
+# To reproduce this run: python ../run_BUSCO.py -i /data3/lanelab/liz/BIO594/Cardio/Trinity/Trinity.fasta -o cardiobusco -l /data3/lanelab/liz/BIO594/alveolata_stramenophiles_ensembl/ -m tran -c 1 -sp toxoplasma
+#
+# Summarized benchmarking in BUSCO notation for file /data3/lanelab/liz/BIO594/Cardio/Trinity/Trinity.fasta
+# BUSCO was run in mode: tran
+
+	C:49.1%[S:15.8%,D:33.3%],F:0.0%,M:50.9%,n:234
+
+	115	Complete BUSCOs (C)
+	37	Complete and single-copy BUSCOs (S)
+	78	Complete and duplicated BUSCOs (D)
+	0	Fragmented BUSCOs (F)
+	119	Missing BUSCOs (M)
+	234	Total BUSCO groups searched
