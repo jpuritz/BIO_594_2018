@@ -1,6 +1,8 @@
 # Final Assignment
 ## Erin M. Roberts
 
+### (5/11/18) Jon: The timing of this project took considerably longer than I predicted as I have never performed an analysis on this many files. The bam files generation from bwa finished yesterday and I have tried to move forward quickly, however I have only been able to perform my pipeline up to marking duplicates with PICARD. I am going to finish my analysis weekend, but I understand my grade will be affected by not planning the timing correctly. Best, Erin
+
 # Goal: Determine Neutral Population Structure of the eastern oyster *C. virginica* from 9 populations from 4  biogeographic populations on the East coast of the United States.
 
 # Data set and Additional Files Necessary to perform the analyses
@@ -346,7 +348,7 @@ echo "done $(date)"
 
 #initially received error: Exception in thread "main" picard.PicardException: Found a samRecordWithOrdinal with sufficiently large clipping that we may have
  missed including it in an early duplicate marking iteration.  Please increase the minimum distance to at least 302bp
-to ensure it is considered (was 300), so the minimum distance was increased. 
+to ensure it is considered (was 300), so the minimum distance was increased.
 ```
 Now we are able to remove duplicates as well as any secondary alignments, mappings with a quality score of less than ten, and reads with more than 80 bp clipped. Finally we can create a BAM index from our fully processed files.
 
@@ -667,7 +669,7 @@ add.scale.bar()
 # we can test for the presence of population structure using Goudet's *G* statistic.
 oyster.gtest <- gstat.randtest(oyster_genind)
 oyster.gtest
-# we can plot a histogram
+
 
 ```
 
