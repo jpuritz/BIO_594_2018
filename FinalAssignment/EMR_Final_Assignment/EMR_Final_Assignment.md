@@ -1,9 +1,9 @@
 # Final Assignment
 ## Erin M. Roberts
 
-### Goal: Determine Neutral Population Structure of the eastern oyster *C. virginica* from 14 populations from 4  biogeographic populations on the East coast of the United States.
+# Goal: Determine Neutral Population Structure of the eastern oyster *C. virginica* from 9 populations from 4  biogeographic populations on the East coast of the United States.
 
-#### Data set and Additional Files Necessary to perform the analyses
+# Data set and Additional Files Necessary to perform the analyses
 1. HiSeq Data Sets sequenced on an Illumina HiSeq X Ten PE150, sequenced without PCR concentration. The full sequence
 set has been limited to only natural populations from high and low salinity from wild populations. This decreases the data set to the following 9 populations:
 
@@ -21,7 +21,6 @@ set has been limited to only natural populations from high and low salinity from
 
 
 2. HiSeq Read Set Sequencing Metadata
-
 
 | Name	  | Run Type	| Library Source| Library Type	    | Adaptor	| Read # 	| Number of Bases	| Average Quality | Percent Duplicate |
 |---------|-----------|---------------|-------------------|---------|---------|-----------------|-----------------|-------------------|
@@ -103,6 +102,12 @@ set has been limited to only natural populations from high and low salinity from
 |SM-7	    |PAIRED_END	|gDNA	          |Shotgun (PCR free)	|LuciGen	|47538272	|14356558144	    |38	              | 8.639             |
 |SM-8	    |PAIRED_END	|gDNA	          |Shotgun (PCR free)	|LuciGen	|35781255	|10805939010	    |38	              | 7.666             |
 |SM-9	    |PAIRED_END	|gDNA	          |Shotgun (PCR free)	|LuciGen	|35628014	|10759660228	    |38	              | 6.895             |
+
+3. Additional Files Necessary to complete this pipeline
+
+-These files are available in my github repository.
+1. popmap_final_TD
+2. strata
 
 #### Step 1: Download and acquire the Data
 
@@ -329,13 +334,19 @@ Because libraries were generated without a PCR prep, there should not be duplica
 wget https://github.com/broadinstitute/picard/releases/download/2.17.8/picard.jar
 
 # Mark and output duplicates
-
+#!/bin/bash
 F=/home/eroberts/repos/BIO_594_2018/FinalAssignment/EMR_Final_Assignment/natural_pop_files
 array1=($(ls *.bam| sed 's/.bam//g'))
 
 for i in ${array1[@]}; do
-  java -Xms4g -jar picard.jar MarkDuplicatesWithMateCigar I=${i}.bam O=${i}.md.bam M=${i}_dup_metrics.txt MINIMUM_DISTANCE=300
+  java -Xms4g -jar picard.jar MarkDuplicatesWithMateCigar I=${i}.bam O=${i}.md.bam M=${i}_dup_metrics.txt MINIMUM_DISTANCE=302
 done
+
+echo "done $(date)"
+
+#initially received error: Exception in thread "main" picard.PicardException: Found a samRecordWithOrdinal with sufficiently large clipping that we may have
+ missed including it in an early duplicate marking iteration.  Please increase the minimum distance to at least 302bp
+to ensure it is considered (was 300), so the minimum distance was increased. 
 ```
 Now we are able to remove duplicates as well as any secondary alignments, mappings with a quality score of less than ten, and reads with more than 80 bp clipped. Finally we can create a BAM index from our fully processed files.
 
@@ -495,7 +506,7 @@ mawk '!/#/' total_ALLPOP.DP3g95p5maf05.fil1.vcf | wc -l
 ```
 10. Apply a filter to account for high coverage causing an inflated locus quality score
 
-Heng Li found that in whole genome samples, high coverage can lead to inflated locus quality scores. Based on this, Jon Purtiz suggests the following filter to remove any locus that has a quality score below 1/4 of the depth. Because we are not working with RADseq data, we will not implement the second filter he suggest to recalculate mean depth.
+Heng Li found that in whole genome samples, high coverage can lead to inflated locus quality scores. Based on this, Jon Puritz suggests the following filter to remove any locus that has a quality score below 1/4 of the depth. Because we are not working with RADseq data, we will not implement the second filter he suggest to recalculate mean depth.
 
 ```
 vcffilter -f "QUAL / DP > 0.25" total_ALLPOP.DP3g95p5maf05.fil1.vcf > total_ALLPOP.DP3g95p5maf05.fil2.vcf
@@ -622,7 +633,7 @@ printf 'LibA\n%.0s' {1..54}
 paste popmap_final_TD libfile > strata
 
 ```
-Now we can add plot our data using adegenet in R. 
+Now we can add plot our data using adegenet in R.
 
 ```
 library(adegenet)
@@ -653,10 +664,15 @@ annot <- round(oyster.tree$edge.length,2)
 edgelabels(annot[annot>0], which(annot>0), frame="n")
 add.scale.bar()
 
+# we can test for the presence of population structure using Goudet's *G* statistic.
+oyster.gtest <- gstat.randtest(oyster_genind)
+oyster.gtest
+# we can plot a histogram
+
 ```
 
 
-# STEP 15: Use PCAdapt to visualize sample clustering my population location
+# STEP 15: Use PCAdapt to visualize sample clustering by population location
 
 We will now use PCAdapt to plot clustering of populations in R.
 
