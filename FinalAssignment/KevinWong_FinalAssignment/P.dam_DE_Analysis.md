@@ -274,6 +274,17 @@ fastqc ../*fastq.gz .
 mv *fastqc.* fastqc_results/
 ```
 
+#### Multiqc report summary of raw reads
+
+![rawsq](https://github.com/kevinhwong1/P.damicornis_Transcriptome_Analysis/blob/master/Output/raw_fastqc_sq.png)
+This graph shows the mean quality at each position across the read. The quality decreases towards the end of the sequence, therefore we will have to trim the end.
+
+![rawqs](https://github.com/kevinhwong1/P.damicornis_Transcriptome_Analysis/blob/master/Output/raw_fastqc_qs.png)
+This graph looks at the average quality scores per sequence. We will have to trim the low quality scores.
+
+![rawgc](https://github.com/kevinhwong1/P.damicornis_Transcriptome_Analysis/blob/master/Output/raw_fastqc_gc.png)
+This graph shows that the sequences are roughly normally distributed.
+
 ### Using Multiqc to summarize FastQC results
 https://github.com/ewels/MultiQC
 ```
@@ -377,6 +388,19 @@ multiqc .
 mv multiqc_report.html multiqc_report_clean.html
 scp -P 2292 kwong@kitt.uri.edu:/home/kwong/Final_Project/raw/allraw/fullreads/cleaned_reads/fastqc_results_clean/multiqc_report_clean.html /Users/kevinwong/Documents/Projects/P.damicornis_Transcriptome_Analysis/Output/
 ```
+
+#### Multiqc report summary of trimmed reads
+
+![cleansq](https://github.com/kevinhwong1/P.damicornis_Transcriptome_Analysis/blob/master/Output/clean_fastqc_sq.png)
+This graph is looking at the mean quality score across the read. The trimmed reads all have decent quality scores.
+
+![cleanqs](https://github.com/kevinhwong1/P.damicornis_Transcriptome_Analysis/blob/master/Output/clean_fastqc_qs.png)
+This graph looks at the average quality scores per sequence. Most of the sequences have high quality scores.
+
+![cleangc](https://github.com/kevinhwong1/P.damicornis_Transcriptome_Analysis/blob/master/Output/clean_fastqc_gc.png)
+This graph shows that the sequences are roughly normally distributed.
+
+The trimmed data looks good according to the fastqc results, therefore we can move on!
 
 ### Aligning reads to reference transcriptome (Script from E. Roberts)
 https://github.com/erinroberts/apoptosis_data_pipeline/blob/master/Streamlined%20Pipeline%20Tutorial/Apoptosis_Pipeline_Tutorial_with_Reduced_Dataset.Rmd
