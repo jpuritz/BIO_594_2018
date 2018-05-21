@@ -212,7 +212,7 @@ multiqc .
 
 # Export file to local folder so you can open it up with .html
 cd /Users/erinroberts/Documents/PHD_coursework_TA/Puritz_pop_gen
-scp -P 2292 eroberts@kitt.uri.edu:/home/eroberts/repos/BIO_594_2018/FinalAssignment/EMR_Final_Assignment/natural_pop_files/fastqc_results/multiqc_report.html .
+scp -P XXXX XXXX@kitt.uri.edu:/home/eroberts/repos/BIO_594_2018/FinalAssignment/EMR_Final_Assignment/natural_pop_files/fastqc_results/multiqc_report.html .
 ```
 
 ### MultiQC Results

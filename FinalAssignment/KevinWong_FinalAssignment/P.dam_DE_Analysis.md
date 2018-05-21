@@ -6,12 +6,12 @@ Data uploaded and analyzed on KITT (made by J. Puritz)
 
 ### Uploading raw data to KITT
 ```
-scp -r -P 2292 /Volumes/NGS_DATA/Hawaii_Pdam/Pdam_Summer_2011/Pdam_2011_Raw/ kwong@kitt.uri.edu:/home/kwong/Final_Project/raw
+scp -r -P XXXX /Volumes/NGS_DATA/Hawaii_Pdam/Pdam_Summer_2011/Pdam_2011_Raw/ XXXX@kitt.uri.edu:/home/kwong/Final_Project/raw
 ```
 
 ### Uploading reference P.dam transcriptome to KITT
 ```
-scp -P 2292 P_damicornis_transcriptome_Seneca2015.fasta kwong@kitt.uri.edu:Final_Project/raw
+scp -P XXXX P_damicornis_transcriptome_Seneca2015.fasta XXXX@kitt.uri.edu:Final_Project/raw
 ```
 
 ### Getting all files into one directory
@@ -24,7 +24,7 @@ grep -rl --null --include '*.fastq.gz' . | xargs -0r cp -t ../allraw
 
 ### Checking the files downloaded correctly (cksum)
 ```
-scp -P 2292 Hawaii_Pacuta_checksum.md5 kwong@kitt.uri.edu:Final_Project/raw/allraw
+scp -P XXXX Hawaii_Pacuta_checksum.md5 XXXX@kitt.uri.edu:Final_Project/raw/allraw
 md5sum *.fastq.gz > Hawaii_Pacuta_checksum2.md5
 cksum Hawaii_Pacuta_checksum.md5 Hawaii_Pacuta_checksum2.md5
 ```
@@ -291,7 +291,7 @@ https://github.com/ewels/MultiQC
 pip install multiqc
 conda install -c bioconda multiqc
 multiqc .
-scp -P 2292 kwong@kitt.uri.edu:/home/kwong/Final_Project/raw/allraw/fullreads/fastqc_results/multiqc_report.html /Users/kevinwong/Documents/Projects/P.damicornis_Transcriptome_Analysis/Output/
+scp -P XXXX XXXX@kitt.uri.edu:/home/kwong/Final_Project/raw/allraw/fullreads/fastqc_results/multiqc_report.html /Users/kevinwong/Documents/Projects/P.damicornis_Transcriptome_Analysis/Output/
 
 ```
 
@@ -386,7 +386,7 @@ https://github.com/ewels/MultiQC
 ```
 multiqc .
 mv multiqc_report.html multiqc_report_clean.html
-scp -P 2292 kwong@kitt.uri.edu:/home/kwong/Final_Project/raw/allraw/fullreads/cleaned_reads/fastqc_results_clean/multiqc_report_clean.html /Users/kevinwong/Documents/Projects/P.damicornis_Transcriptome_Analysis/Output/
+scp -P XXXX XXXX@kitt.uri.edu:/home/kwong/Final_Project/raw/allraw/fullreads/cleaned_reads/fastqc_results_clean/multiqc_report_clean.html /Users/kevinwong/Documents/Projects/P.damicornis_Transcriptome_Analysis/Output/
 ```
 
 #### Multiqc report summary of trimmed reads
@@ -562,7 +562,7 @@ echo "STOP" $(date)
 #### Uploading sample information to KITT
 
 ```
-scp -r -P 2292 /Users/kevinwong/Documents/Projects/P.damicornis_Transcriptome_Analysis/Data/Pdam_2011_sample_info.csv kwong@kitt.uri.edu:/home/kwong/Final_Project/raw/allraw/fullreads/cleaned_reads/P_Dam_Transcriptome
+scp -r -P XXXX /Users/kevinwong/Documents/Projects/P.damicornis_Transcriptome_Analysis/Data/Pdam_2011_sample_info.csv XXXX@kitt.uri.edu:/home/kwong/Final_Project/raw/allraw/fullreads/cleaned_reads/P_Dam_Transcriptome
 ```
 
 ## Using remote RStudio to perform DESeq2 Analysis
