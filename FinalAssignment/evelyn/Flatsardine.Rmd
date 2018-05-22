@@ -1,0 +1,227 @@
+---
+title: "Analysis of Data for Round sardines"
+output:
+  github_document: default
+  html_document: default
+  pdf_document: default
+---
+##  Flat sardine
+
+
+## Packages utilised
+
+```{r include=FALSE}
+library(vcfR)
+library(treemap)
+library(readr)
+require(devtools)
+library(ggplot2)
+library(reshape2)
+library(pegas)
+library(ape)  
+library(ade4)
+library(adegenet)
+library(diveRsity)
+library(genetics)
+library(hierfstat)
+library(iterators)
+library(poppr)
+library(readxl)
+library(readr)
+library("magrittr")
+library("mmod")
+library(StAMPP)
+library(lattice)
+library(ggmap)
+library(dplyr)
+library(maps)
+
+```
+### Determine Genetic diversity using  heterozygosity
+### Read the genepop file into R
+```{r}
+SAM <- read.genepop("~/Desktop/maderensis/FinalMAD_Haps.gen",ncode = 3, quiet = FALSE)
+```
+### Plotting  heterozygosity as a measure of genetic diversity in each population.
+```{r}
+bb <- divBasic(infile ="~/Desktop/maderensis/FinalMAD_Haps.gen" , outfile = "by", gp = 3, bootstraps = 1000,HWEexact = FALSE, mcRep = 1000)
+
+Allerich <- summary(bb$Allelic_richness)
+Hetero <- summary(bb$He) $
+heteroz <- read.csv("~/Documents/plot/diversity.csv")
+heteroz
+barplot(heteroz$Heterozygosity, main="Plot of genetic diversity in each population country",ylab="Heterozygosity", xlab="population", names= heteroz$Population, las = 2)
+```
+![diversity](https://github.com/evelyn-takyi/BIO594/blob/master/maderensis/Screenshot%202018-05-22%2007.34.34.png)
+
+## Determine population structure
+### Import data into R
+```{r}
+AU1 <- read.vcfR("~/Desktop/maderensis/SNPmaddp.neutralonly.recode.vcf")
+```
+
+### convert dataset into genind objects 
+```{r }
+genindB <- vcfR2genind(AU1)
+strata<- read.table("~/Desktop/madstrata", header=TRUE)
+strata_df <- data.frame(strata)
+strata(genindB) <- strata_df
+setPop(genindB) <- ~Population
+```
+
+### Compute overall FST and FIS value for the population
+```{r}
+wc(genindB)
+```
+$FST
+[1] 0.02921341
+
+$FIS
+[1] -0.09755022
+
+
+
+
+### Calculating pairwise FST values
+```{r}
+Fst <- pairwise.fst(genindB)
+Fst
+```
+![pairwise](https://github.com/evelyn-takyi/BIO594/blob/master/maderensis/Screenshot%202018-05-22%2007.35.10.png)
+
+### Representation of pairwise FST values in a heatmap format
+```{r}
+gindF.fst.mat <- pairwise.fst(genindB, pop = strata(genindB)$Population,res.type = "matrix")
+gindF.fst.mat
+reg_names = c("Benin","Ghana","Mauritania","Senegal")
+colnames(gindF.fst.mat)<- reg_names
+rownames(gindF.fst.mat)<- reg_names
+
+gindF.fst.mat.tri <- gindF.fst.mat
+gindF.fst.mat.tri[lower.tri(gindF.fst.mat, diag=TRUE)] <- NA
+melted <- melt(gindF.fst.mat, na.rm =TRUE)
+par(mfrow=c(2,1))
+ggplot(data = melted, aes(Var2, Var1, fill = value))+ geom_tile(color = "white")+
+  scale_fill_gradient(low = "white", high = "red", name="FST")  +
+  ggtitle(expression(atop("Pairwise FST, WC (1984)", atop(italic("N = 137, L = 9,170"), ""))))+
+  labs( x = "Sampling Site", y = "Sampling Site") +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, size = 6, hjust = 1),axis.text.y = element_text(size = 10)) +
+  coord_fixed()
+
+```
+![pairwise](https://github.com/evelyn-takyi/BIO594/blob/master/maderensis/Screenshot%202018-05-22%2007.35.31.png)
+
+### converting data to a genlight object for performing PCA analysis
+```{r}
+aa.genlightM <- vcfR2genlight(AU1, n.cores=1)
+locNames(aa.genlightM) <- paste(AU1@fix[,1],AU1@fix[,2],sep="_")
+pop(aa.genlightM)<-substr(indNames(aa.genlightM),1,3)
+```
+### Principal Component Analysis (PCA) to determine the genetic relatedness of each sample population
+```{r}
+rubi.pca <- glPca(aa.genlightM, nf = 10)
+barplot(rubi.pca$eig, col = heat.colors(50), main="PCA Eigenvalues")
+title(ylab="Proportion of variance explained")
+title(xlab="Eigenvalue")
+
+rubi.pca.scores <- as.data.frame(rubi.pca$scores)
+rubi.pca.scores$pop <- pop(aa.genlightM)
+
+set.seed(999)
+G <- ggplot(rubi.pca.scores, aes(x=PC1, y=PC2, colour=pop)) 
+G <- G + geom_point(size=2)
+G <- G + stat_ellipse(level = 0.95, size = 1)
+G
+```
+BM : Benin
+
+GM : Ghana
+
+MM : Mauritania
+
+SM : Senegal
+
+![pairwise](https://github.com/evelyn-takyi/BIO594/blob/master/maderensis/Screenshot%202018-05-22%2007.39.13.png)
+
+
+### Discriminant Analysis of Principal Components(DAPC) plot to determine different groupings in the population 
+```{r}
+dapcB <- dapc(aa.genlightM, n.pca=10, n.da=2)
+scatter(dapcB,scree.da=TRUE, bg="white", posi.pca="topright", legend=FALSE,
+txt.leg=paste("group", 1:5), col=c("red","blue", "green", "black", "violet"))
+```
+BM : Benin
+
+GM : Ghana
+
+MM : Mauritania
+
+SM : Senegal
+
+
+![pairwise](https://github.com/evelyn-takyi/BIO594/blob/master/maderensis/Screenshot%202018-05-22%2007.39.37.png)
+
+### structure-like plot indicating membership probability of each sample
+```{r}
+dapcB.results <- as.data.frame(dapcB$posterior)
+dapcB.results$pop <- pop(genindB)
+dapcB.results$indNames <- rownames(dapcB.results)
+library(reshape2)
+dapcB.results <- melt(dapcB.results)
+colnames(dapcB.results) <- c("Original_Pop","Sample","Assigned_Pop","Posterior_membership_probability")
+p <- ggplot(dapcB.results, aes(x=Sample,y=Posterior_membership_probability, fill=Assigned_Pop))
+p <- p + geom_bar(stat='identity') 
+p <- p + facet_grid(~Original_Pop, scales = "free")
+p <- p + theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 5))
+p
+```
+BM : Benin
+
+GM : Ghana
+
+MM : Mauritania
+
+SM : Senegal
+
+![pairwise](https://github.com/evelyn-takyi/BIO594/blob/master/maderensis/Screenshot%202018-05-22%2007.40.08.png)
+
+
+### Neighbour Joining Tree plotted 
+```{r}
+strata <- read.table("~/Desktop/madstrata", head=TRUE)
+strata_df <- data.frame(strata)
+strata(genindB) <- strata_df
+setPop(genindB) <- ~Population
+xy <- read.table("~/Desktop/AMresults/S_aurita.dismatrix.txt")
+genindB@other$xy <- xy
+
+titi <- genind2genpop(genindB)
+Genetic.distance <- dist.genpop(titi, method=2)
+Geographic.distance <- dist(genindB$other$xy)
+tree <- nj(Genetic.distance)
+plot.phylo(tree)
+```
+![pairwise](https://github.com/evelyn-takyi/BIO594/blob/master/maderensis/Screenshot%202018-05-22%2007.40.28.png)
+
+
+### Relationship between geographic distance and  genetic distance plot
+```{r}
+ibd <- mantel.randtest(Genetic.distance,Geographic.distance)
+plot(ibd)
+plot(Geographic.distance,Genetic.distance)
+abline(lm(Genetic.distance~Geographic.distance), col="red", lty=2)
+```
+![pairwise](https://github.com/evelyn-takyi/BIO594/blob/master/maderensis/Screenshot%202018-05-22%2007.41.08.png)
+
+### Perform AMOVA using Genodive with grouping of data into Northwest and southwest
+
+![pairwise](https://github.com/evelyn-takyi/BIO594/blob/master/maderensis/Screenshot%202018-05-22%2007.41.52.png)
+
+
+### Estimate effective reproducing population using the program Neestimator with the linkage disequilibrim method.
+
+![pairwise](https://github.com/evelyn-takyi/BIO594/blob/master/maderensis/Screenshot%202018-05-22%2007.42.47.png)
+
+
+
+
