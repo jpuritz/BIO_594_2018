@@ -1,0 +1,258 @@
+---
+title: "S.aurita analysis"
+output: 
+  pdf_document: default 
+  github_document: default
+---
+## Final analysis
+Aim : To determine the population genetic structure of round sardine and flat sardine in the West Africa
+
+The two species of interest to be analysed for population structure are round sardine and flat sardine. These are two separate species which are among the most abundant small pelagic sardine fish species in the Gulf of Guinea region in West Africa however, currently, their abundance is known to fluctuate greatly and declining in the region. The study of the population structure of these species that has been carrried out so far using allozymes did not reveal any structure among  these countries  (Mauritania, Ghana, Togo, Benin, senegal).  The technique used in studying the population structure of these species is Restricted Associated DNA sequences (RADSEQ) specifically ddRAD. The bioinformatics pipeline used in proessing of the Raw sequence reads is the dDocent pipeline and  all other analysis performed using R statistical packages, GenoDive and Neestimator.
+
+## Round sardine
+
+## Data set
+ Two read files R1 and R2 of ddRADseq data from five populations were obtained from illumina Hiseq plaftorm sequencer.
+
+![diversity](https://github.com/evelyn-takyi/BIO594/blob/master/Screenshot%202018-05-22%2008.27.16.png)
+ 
+Denovo assembly, Read mapping and SNP calling of the raw sequence  were carried out using Ddocent pipeline and freebayers with defalut parameters to call raw variants.
+
+SNP filtering of the raw variant calls were carried out using VCFtools and various scripts to filter out erroneous variants calls and variants of poor quality. 
+
+### Perform bayescan
+Bayescan was perfomed on the filtered variant file to remove outliers in the data to analyse neutral populations.
+
+### Filtered SNP consists of 
+552 loci
+1840 variant calls
+
+## Data Analysis
+Analysis of the data was carried out using various R statistical packages, the program GenoDive and Neestimator program.
+
+
+### R packages utilised to measure various population genetics indices
+```{r }
+library(vcfR)
+library(treemap)
+library(readr)
+require(devtools)
+library(ggplot2)
+library(reshape2)
+library(pegas)
+library(ape)  
+library(ade4)
+library(adegenet)
+library(diveRsity)
+library(genetics)
+library(hierfstat)
+library(iterators)
+library(poppr)
+library(readxl)
+library(readr)
+library("magrittr")
+library("mmod")
+library(StAMPP)
+library(lattice)
+library(ggmap)
+library(dplyr)
+library(maps)
+```
+
+### Determine Genetic diversity using Allelic richness and heterozygosity
+### Read the genepop file into R
+```{r}
+ SAU <- read.genepop("~/Desktop/aurita/FinalAU_Haps.gen",ncode = 3, quiet = FALSE)
+```
+### Plotting  heterozygosity as a measure of genetic diversity in each population.
+```{r}
+ba <- divBasic(infile ="~/Desktop/aurita/FinalAU_Haps.gen" , outfile = "by", gp = 3, bootstraps = 1000,HWEexact = FALSE, mcRep = 2000)
+Allerich <- summary(ba$Allelic_richness)
+Hetero <- summary(ba$He) $
+heteroz <- read.csv("~/Desktop/aurita/diversity.csv")
+heteroz
+barplot(heteroz$Heterozygosity, main="Plot of genetic diversity in each population country",ylab="Heterozygosity", xlab="population", names= heteroz$Population, las = 2)
+```
+![diversity](https://github.com/evelyn-takyi/BIO594/blob/master/Screenshot%202018-05-22%2001.41.18.png)
+
+## Determine population structure
+### Import data into R
+```{r}
+my_vcf <- read.vcfR("~/Desktop/aurita/SNPAUdp.neutralonly.recode.vcf")
+```
+### convert dataset into genind objects
+```{r}
+genind <- vcfR2genind(my_vcf)
+strata<- read.table("~/Desktop/S_A.strata.txt", header=TRUE)
+strata_df <- data.frame(strata)
+strata(genind) <- strata_df
+setPop(genind) <- ~Population
+genind@strata
+genind@pop
+```
+### Compute overall FST and FIS value for the population
+```{r}
+wc(genind)
+```
+$FST
+[1] 0.001272541
+
+$FIS
+[1] -0.4400409
+
+### Calculating pairwise FST values for the population
+
+```{r}
+Fst <- pairwise.fst(genind)
+Fst
+```
+![Pairwise FST]( https://github.com/evelyn-takyi/BIO594/blob/master/Screenshot%202018-05-22%2001.42.21.png)   
+
+### Representation of pairwise FST values in heatmap format
+```{r}
+gindF.fst.mat <- pairwise.fst(genind, pop = strata(genind)$Population,res.type = "matrix")
+gindF.fst.mat
+reg_names = c("Benin","Ghana","Mauritania","Senegal","Togo")
+colnames(gindF.fst.mat)<- reg_names
+rownames(gindF.fst.mat)<- reg_names
+
+gindF.fst.mat.tri <- gindF.fst.mat
+gindF.fst.mat.tri[lower.tri(gindF.fst.mat, diag=TRUE)] <- NA
+melted <- melt(gindF.fst.mat, na.rm =TRUE)
+par(mfrow=c(2,1))
+ggplot(data = melted, aes(Var2, Var1, fill = value))+ geom_tile(color = "white")+
+  scale_fill_gradient(low = "white", high = "red", name="FST")  +
+  ggtitle(expression(atop("Pairwise FST, WC (1984)", atop(italic("N = 137, L = 9,170"), ""))))+
+  labs( x = "Sampling Site", y = "Sampling Site") +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, size = 12, hjust = 1),axis.text.y = element_text(size = 13)) +
+  coord_fixed()
+
+```
+![Pairwise FST](https://github.com/evelyn-takyi/BIO594/blob/master/Screenshot%202018-05-21%2014.35.22.png)
+
+
+### compute the G-statistic Monte Carlo procedure tests for population structuring within the population and between the population
+```{r}
+gstat.randtest(genind,pop=NULL, method=c("global","within","between"),
+sup.pop=NULL, sub.pop=NULL, nsim=1000)
+```
+![monte carlo test](https://github.com/evelyn-takyi/BIO594/blob/master/Screenshot%202018-05-21%2014.36.01.png)
+
+
+### converting data to a genlight object for performing PCA analysis
+```{r}
+aa.genlightA <- vcfR2genlight(my_vcf, n.cores=1)
+locNames(aa.genlightA) <- paste(my_vcf@fix[,1],my_vcf@fix[,2],sep="_")
+pop(aa.genlightA)<-substr(indNames(aa.genlightA),1,3)
+```
+### Principal Component Analysis (PCA) to determine the genetic relatedness of each sample population
+```{r}
+PCA1 <- glPca(aa.genlightA, nf = 13)
+barplot(PCA1$eig, col = heat.colors(50), main="PCA Eigenvalues")
+title(ylab="Proportion of variance explained")
+title(xlab="Eigenvalue")
+
+PCA1.scores <- as.data.frame(PCA1$scores)
+PCA1.scores$pop <- pop(aa.genlightA)
+
+set.seed(999)
+G <- ggplot(PCA1.scores, aes(x=PC1, y=PC2, colour=pop)) 
+G <- G + geom_point(size=2)
+G <- G + stat_ellipse(level = 0.95, size = 1)
+G
+```
+BA : Benin
+
+GA : Ghana
+
+MA : Mauritania
+
+SA : Senegal
+
+TA : Togo
+![pca](https://github.com/evelyn-takyi/BIO594/blob/master/Screenshot%202018-05-21%2014.36.25.png)
+
+### Discriminant Analysis of Principal Components(DAPC) plot to determine different groupings in the population 
+```{r}
+dapca <- dapc(aa.genlightA, n.pca=13, n.da=2)
+scatter(dapca,scree.da=TRUE, bg="white", posi.pca="topright", legend=FALSE,
+txt.leg=paste("group", 1:2), col=c("red","blue", "green", "black", "violet"))
+```
+BA : Benin
+
+GA : Ghana
+
+MA : Mauritania
+
+SA : Senegal
+
+TA : Togo
+![dapc](https://github.com/evelyn-takyi/BIO594/blob/master/Screenshot%202018-05-21%2014.36.54.png)
+
+### structure-like plot indicating membership probability of each sample
+```{r}
+dapc.results <- as.data.frame(dapca$posterior)
+dapc.results$pop <- pop(genind)
+dapc.results$indNames <- rownames(dapc.results)
+
+dapc.results <- melt(dapc.results)
+colnames(dapc.results) <- c("Original_Pop","Sample","Assigned_Pop","Posterior_membership_probability")
+p <- ggplot(dapc.results, aes(x=Sample,y=Posterior_membership_probability, fill=Assigned_Pop))
+p <- p + geom_bar(stat='identity') 
+p <- p + facet_grid(~Original_Pop, scales = "free")
+p <- p + theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 5))
+p
+```
+
+BA : Benin
+
+GA : Ghana
+
+MA : Mauritania
+
+SA : Senegal
+
+TA : Togo
+
+![structure](https://github.com/evelyn-takyi/BIO594/blob/master/Screenshot%202018-05-21%2014.37.54.png)
+
+
+### Neighbour Joining Tree plotted 
+```{r}
+strata <- read.table("~/Desktop/S_A.strata.txt", head=TRUE)
+strata_df <- data.frame(strata)
+strata(genind) <- strata_df
+setPop(genind) <- ~Population
+xy <- read.table("~/Desktop/AMresults/S_aurita.dismatrix.txt")
+genind@other$xy <- xy
+toto <- genind2genpop(genind)
+Genetic.distance <- dist.genpop(toto, method=2)
+Geographic.distance <- dist(genind$other$xy)
+tree <- nj(Genetic.distance)
+plot.phylo(tree)
+```
+![tree](https://github.com/evelyn-takyi/BIO594/blob/master/Screenshot%202018-05-21%2014.38.20.png)
+
+### Relationship between geographic distance and  genetic distance plot
+```{r}
+ibd <- mantel.randtest(Genetic.distance,Geographic.distance)
+plot(ibd)
+plot(Geographic.distance,Genetic.distance)
+abline(lm(Genetic.distance~Geographic.distance), col="red", lty=2)
+```
+
+![tree](https://github.com/evelyn-takyi/BIO594/blob/master/Screenshot%202018-05-21%2014.38.44.png)
+### Perform AMOVA using Genodive with grouping of data into Northwest and southwest
+  
+![tree](https://github.com/evelyn-takyi/BIO594/blob/master/Screenshot%202018-05-22%2001.43.39.png)
+
+### Estimate effective reproducing population using the program Neestimator with the linkage disequilibrim method.
+
+![tree](https://github.com/evelyn-takyi/BIO594/blob/master/Screenshot%202018-05-22%2001.44.33.png)
+
+
+
+
+
+
+
