@@ -1,0 +1,356 @@
+## Bioinformatics code for Round sardine
+###  Denovo Assembly, Read Mapping and variant calling were perfomed on bluewaves.
+### the package was loaded on bluewaves 
+dDocent
+dDocent 2.2.20 
+
+Contact jpuritz@gmail.com with any problems 
+
+ 
+Checking for required software
+
+All required software is installed!
+
+dDocent run started Tue May 22 18:14:35 EDT 2018 
+
+62 individuals are detected. Is this correct? Enter yes or no and press [ENTER]
+yes
+Proceeding with 62 individuals
+dDocent detects 20 processors available on this system.
+Please enter the maximum number of processors to use for this analysis.
+20
+dDocent detects 125G maximum memory available on this system.
+Please enter the maximum memory to use for this analysis. The size can be postfixed with 
+K, M, G, T, P, k, m, g, t, or p which would multiply the size with 1024, 1048576, 1073741824, 
+1099511627776, 1125899906842624, 1000, 1000000, 1000000000, 1000000000000, or 1000000000000000 respectively.
+For example, to limit dDocent to ten gigabytes, enter 10G or 10g
+120G
+
+Do you want to quality trim your reads?
+Type yes or no and press [ENTER]?
+yes
+
+Do you want to perform an assembly?
+Type yes or no and press [ENTER].
+yes
+What type of assembly would you like to perform?  Enter SE for single end, PE for paired-end, RPE for paired-end sequencing for RAD protocols with random shearing, or OL for paired-end sequencing that has substantial overlap.
+Then press [ENTER]
+PE
+Reads will be assembled with Rainbow
+CD-HIT will cluster reference sequences by similarity. The -c parameter (% similarity to cluster) may need to be changed for your taxa.
+Would you like to enter a new c parameter now? Type yes or no and press [ENTER]
+no
+Proceeding with default 0.9 value.
+Do you want to map reads?  Type yes or no and press [ENTER]
+yes
+BWA will be used to map reads.  You may need to adjust -A -B and -O parameters for your taxa.
+Would you like to enter a new parameters now? Type yes or no and press [ENTER]
+no
+Proceeding with default values for BWA read mapping.
+Do you want to use FreeBayes to call SNPs?  Please type yes or no and press [ENTER]
+yes
+
+Please enter your email address.  dDocent will email you when it is finished running.
+Don't worry; dDocent has no financial need to sell your email address to spammers.
+evelyn-takyi@my.uri.edu
+
+
+dDocent will require input during the assembly stage.  Please wait until prompt says it is safe to move program to the background.
+Trimming reads and simultaneously assembling reference sequences
+dDocent will require input during the assembly stage.  Please wait until prompt says it is safe to move program to the background.
+Trimming reads and simultaneously assembling reference sequences
+
+
+                                                                                                                        
+                       Number of Unique Sequences with More than X Coverage (Counted within individuals)                
+                                                                                                                        
+  1.4e+07 +-+---------+-----------+----------+-----------+-----------+-----------+----------+-----------+---------+-+   
+          +           +           +          +           +           +           +          +           +           +   
+          |                                                                                                         |   
+  1.2e+07 *-+                                                                                                     +-+   
+          *                                                                                                         |   
+          |*                                                                                                        |   
+          |*                                                                                                        |   
+    1e+07 +-*                                                                                                     +-+   
+          | *                                                                                                       |   
+          |  *                                                                                                      |   
+    8e+06 +-+*                                                                                                    +-+   
+          |  *                                                                                                      |   
+          |   *                                                                                                     |   
+    6e+06 +-+ *                                                                                                   +-+   
+          |    *                                                                                                    |   
+          |    *                                                                                                    |   
+    4e+06 +-+   *                                                                                                 +-+   
+          |     ***                                                                                                 |   
+          |        *                                                                                                |   
+          |         **                                                                                              |   
+    2e+06 +-+                                                                                                     +-+   
+          |           ******                                                                                        |   
+          +           +     ***********      +           +           +           +          +           +           +   
+        0 +-+---------+-----------+----******************************************************************************   
+          2           4           6          8           10          12          14         16          18          20  
+                                                           Coverage                                                     
+                                                                                                                        
+Please choose data cutoff.  In essence, you are picking a minimum (within individual) coverage level for a read (allele) to be used in the reference assembly
+4
+
+                                                                                                                        
+                                Number of Unique Sequences present in more than X Individuals                           
+                                                                                                                        
+  140000 +-+---*--------+---------------+--------------+--------------+--------------+---------------+------------+-+   
+         +     *        +               +              +              +              +               +              +   
+         |     *                                                                                                    |   
+  120000 +-+    *                                                                                                 +-+   
+         |      *                                                                                                   |   
+         |      *                                                                                                   |   
+         |      *                                                                                                   |   
+  100000 +-+     *                                                                                                +-+   
+         |       *                                                                                                  |   
+         |       *                                                                                                  |   
+   80000 +-+     *                                                                                                +-+   
+         |        *                                                                                                 |   
+         |        *                                                                                                 |   
+   60000 +-+      *                                                                                               +-+   
+         |         *                                                                                                |   
+         |         *                                                                                                |   
+   40000 +-+        *                                                                                             +-+   
+         |          *                                                                                               |   
+         |           ***                                                                                            |   
+         |              ***                                                                                         |   
+   20000 +-+               ***                                                                                    +-+   
+         |                    *******                                                                               |   
+         +              +            *********************************+              +               +              +   
+       0 +-+------------+---------------+--------------+--------------***********************************---------+-+   
+         0              5               10             15             20             25              30             35  
+                                                    Number of Individuals                                               
+                                                                                                                        
+Please choose data cutoff.  Pick point right before the assymptote. A good starting cutoff might be 10% of the total number of individuals
+5
+At this point, all configuration information has been entered and dDocent may take several hours to run.
+It is recommended that you move this script to a background operation and disable terminal input and output.
+All data and logfiles will still be recorded.
+
+Now sit back, relax, and wait for your analysis to finish.
+TrimmomaticSE: Started with arguments: -threads 20 -phred33 uniq.fq uniq.fq1 ILLUMINACLIP:/opt/software/ddocent/2.2.20-foss-2016b/bin/TruSeq2-PE.fa:2:30:10 MINLEN:230
+Using PrefixPair: 'AATGATACGGCGACCACCGAGATCTACACTCTTTCCCTACACGACGCTCTTCCGATCT' and 'CAAGCAGAAGACGGCATACGAGATCGGTCTCGGCATTCCTGCTGAACCGCTCTTCCGATCT'
+Using Long Clipping Sequence: 'AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTCGCCGTATCATT'
+Using Long Clipping Sequence: 'AGATCGGAAGAGCGGTTCAGCAGGAATGCCGAGACCGATCTCGTATGCCGTCTTCTGCTTG'
+Using Long Clipping Sequence: 'TTTTTTTTTTAATGATACGGCGACCACCGAGATCTACAC'
+Using Long Clipping Sequence: 'TTTTTTTTTTCAAGCAGAAGACGGCATACGA'
+Using Long Clipping Sequence: 'CAAGCAGAAGACGGCATACGAGATCGGTCTCGGCATTCCTGCTGAACCGCTCTTCCGATCT'
+Using Long Clipping Sequence: 'AATGATACGGCGACCACCGAGATCTACACTCTTTCCCTACACGACGCTCTTCCGATCT'
+ILLUMINACLIP: Using 1 prefix pairs, 6 forward/reverse sequences, 0 forward only sequences, 0 reverse only sequences
+Input Reads: 21597 Surviving: 21597 (100.00%) Dropped: 0 (0.00%)
+TrimmomaticSE: Completed successfully
+orward reads file.................: ref.F.fq
+Reverse reads file.................: ref.R.fq
+PHRED..............................: 33
+Using empirical frequencies........: YES
+Statistical method.................: OES
+Maximum assembly length............: 999999
+Minimum assembly length............: 188
+p-value............................: 0.001000
+Quality score threshold (trimming).: 0
+Minimum read size after trimming...: 1
+Maximal ratio of uncalled bases....: 1.000000
+Minimum overlap....................: 10
+Scoring method.....................: Scaled score
+Threads............................: 20
+
+Allocating memory..................: 200,000,000 bytes
+Computing empirical frequencies....: DONE
+  A: 0.274960
+  C: 0.225569
+  G: 0.224900
+  T: 0.274571
+  8 uncalled bases
+Assemblying reads: 100%
+Assembled reads ...................: 1,128 / 3,740 (30.160%)
+Discarded reads ...................: 0 / 3,740 (0.000%)
+Not assembled reads ...............: 2,612 / 3,740 (69.840%)
+Assembled reads file...............: overlap.assembled.fastq
+Discarded reads file...............: overlap.discarded.fastq
+Unassembled forward reads file.....: overlap.unassembled.forward.fastq
+Unassembled reverse reads file.....: overlap.unassembled.reverse.fastq
+================================================================
+Program: CD-HIT, V4.7 (+OpenMP), Jul 11 2017, 18:04:58
+Command: cd-hit-est -i totalover.fasta -o
+         reference.fasta.original -M 0 -T 0 -c 0.9
+
+Started: Tue May 22 23:43:52 2018
+================================================================
+                            Output                              
+----------------------------------------------------------------
+total number of CPUs in the system is 20
+Actual number of CPUs to be used: 20
+
+total seq: 3740
+longest and shortest : 438 and 188
+Total letters: 1092101
+Sequences have been sorted
+
+Approximated minimal memory consumption:
+Sequence        : 1M
+Buffer          : 20 X 12M = 243M
+Table           : 2 X 16M = 33M
+Miscellaneous   : 4M
+Total           : 283M
+
+Table limit with the given memory limit:
+Max number of representatives: 547213
+Max number of word counting entries: 27869451
+
+# comparing sequences from          0  to        170
+---------- new table with      170 representatives
+# comparing sequences from        170  to        332
+----------     62 remaining sequences to the next cycle
+---------- new table with      100 representatives
+# comparing sequences from        270  to        427
+----------     45 remaining sequences to the next cycle
+---------- new table with      112 representatives
+# comparing sequences from        382  to        534
+98.7%---------- new table with      152 representatives
+# comparing sequences from        534  to        679
+67.0%---------- new table with      145 representatives
+# comparing sequences from        679  to        818
+90.0%---------- new table with      139 representatives
+# comparing sequences from        818  to        950
+88.8%---------- new table with      132 representatives
+# comparing sequences from        950  to       1076
+----------     25 remaining sequences to the next cycle
+---------- new table with      100 representatives
+# comparing sequences from       1051  to       1173
+----------     21 remaining sequences to the next cycle
+---------- new table with      101 representatives
+# comparing sequences from       1152  to       1269
+----------      6 remaining sequences to the next cycle
+---------- new table with      111 representatives
+# comparing sequences from       1263  to       1375
+94.2%---------- new table with      112 representatives
+# comparing sequences from       1375  to       1482
+91.4%---------- new table with      107 representatives
+# comparing sequences from       1482  to       1584
+78.8%---------- new table with      102 representatives
+# comparing sequences from       1584  to       1682
+....................---------- new table with       98 representatives
+# comparing sequences from       1682  to       1775
+99.9%---------- new table with       93 representatives
+# comparing sequences from       1775  to       1864
+..................---------- new table with       89 representatives
+# comparing sequences from       1864  to       1949
+90.6%---------- new table with       85 representatives
+# comparing sequences from       1949  to       2030
+72.8%---------- new table with       81 representatives
+# comparing sequences from       2030  to       2107
+...................---------- new table with       77 representatives
+# comparing sequences from       2107  to       2181
+67.8%---------- new table with       74 representatives
+# comparing sequences from       2181  to       2251
+.................---------- new table with       70 representatives
+# comparing sequences from       2251  to       2318
+95.7%---------- new table with       67 representatives
+# comparing sequences from       2318  to       2382
+77.7%---------- new table with       64 representatives
+# comparing sequences from       2382  to       2443
+...............---------- new table with       61 representatives
+# comparing sequences from       2443  to       2501
+99.8%---------- new table with       58 representatives
+# comparing sequences from       2501  to       2557
+83.5%---------- new table with       56 representatives
+# comparing sequences from       2557  to       2610
+.................---------- new table with       53 representatives
+# comparing sequences from       2610  to       2661
+85.2%---------- new table with       51 representatives
+# comparing sequences from       2661  to       2710
+.................---------- new table with       49 representatives
+# comparing sequences from       2710  to       2756
+...............---------- new table with       46 representatives
+# comparing sequences from       2756  to       3740
+....................---------- new table with      966 representatives
+
+     3740  finished       3721  clusters
+Using BWA to map reads.
+[bam_sort_core] merging from 0 files and 20 in-memory blocks...
+[bam_sort_core] merging from 0 files and 20 in-memory blocks...
+[bam_sort_core] merging from 0 files and 20 in-memory blocks...
+[bam_sort_core] merging from 0 files and 20 in-memory blocks...
+[bam_sort_core] merging from 0 files and 20 in-memory blocks...
+[bam_sort_core] merging from 0 files and 20 in-memory blocks...
+[bam_sort_core] merging from 0 files and 20 in-memory blocks...
+
+Creating alignment intervals
+Using FreeBayes to call SNPs
+Using VCFtools to parse TotalRawSNPS.vcf for SNPs that are called in at least 90% of individuals
+
+### Total variant call in TotalRawSNPs.vcf
+[evelyn-takyi@n024 S_aurita]$ mawk '!/#/' TotalRawSNPs.vcf | wc
+ 366983 26055793 1153267987
+
+## SNP filtering
+
+###  filter out variant calls that below 1% minor allele frequency and not called in 50% individual samples 
+vcftools --vcf TotalRawSNPs.vcf --max-missing 0.5 --maf 0.001 --minQ 20 --recode --recode-INFO-all --out AU
+
+###  change all genotypes with less than 5 reads to missing data
+vcftools --vcf AU.recode.vcf --minDP 5 --recode --recode-INFO-all --out AUdp5
+
+### filter loci that have high missing data values in each  single population.
+./pop_missing_filter.sh AUdp5.recode.vcf popmap 0.5 1 AUdp5p05
+
+### filter out bad individual samples
+filter_missing_ind.sh AUdp5p05.recode.vcf AUdp5p05I
+
+### ddocent filters
+./dDocent_filters AUdp5p05I.recode.vcf AUdp5p05Id
+
+### sepearte SNP and INDEL calls, and then remove INDELs.
+vcfallelicprimitives -k -g AUdp5p05Id.FIL.recode.vcf |sed 's:\.|\.:\.\/\.:g' > AUdp5p05F.prim
+vcftools --vcf AUdp5p05F.prim --recode --recode-INFO-all --remove-indels --out SNP.AUdp5p05F
+
+### filter out loci that are out of HWE in more than half the populations
+filter_hwe_by_pop.pl -v SNP.AUdp5p05F.recode.vcf -p popmap -c 0.5 -out
+
+###  make haplotype calls across RAD loci using both F and R reads and remove loci with high levels of missing data and potential paralogs using the script rad_haplotyper
+rad_haplotyper.pl  -v SNP.AUdp5MIp25g9HWE2a.recode.vcf -p popmap -r reference.fasta -x 10 -mp 5
+cp stats.out stats.out.HF
+mawk '/Missi/' stats.out.HF | mawk '$9 > 30' > HF.missing
+mawk '/para/' stats.out.HF > HF.para
+cat HF.para HF.missing > HF.loci.tofilter
+### use the script remove.bad.hap.loci
+remove.bad.hap.loci.sh HF.loci.tofilter SNP.AUdp5MIp25g9HWE.recode.vcf
+
+### filter with minimum allele frequency of 5%
+vcftools --vcf SNP.AUdp5p05FHWE.recode.vcf --maf 0.05 --recode --recode-INFO-all --out SNP.AUdp5p05FHWEmaf05
+
+### restrict loci to two alleles
+vcftools --vcf SNP.AUdp5p05FHWEmaf05.recode.vcf --max-alleles 2 --recode --recode-INFO-all --out SNP.AUdp5p05FHWE2A
+
+### run bayescan to detect outliers
+### Use PGDSpider to convert SNPs to BayeScan input file.
+java -jar /usr/local/bin/PGDSpider2-cli.jar -inputfile SNP.AUdp5p05FHWE2A.recode.vcf -outputfile SNP.AUdp5p05FHWEBS -spid BSsnp.spid
+### run bayescan
+'BayeScan2.1_linux64bits SNP.AUdp5p05FHWEBS -nbp 30 -thin 20 > bs.log'
+
+## this takes time to run , so run at the background 
+'run bayescan at the background'
+'control z, bg, disown -a'
+
+##use a VCFtoOutlierOnly.sh script to detect outliers after bayescan and remove them
+./VCFtoOutlierOnly.sh SNP.AUdp5p05FHWE2A.recode.vcf SNP.AUdp5p05FHWEBS_fst.txt 0.1 SNPAUdp  0.1
+
+## rerun bayescan to be sure of no outliers.
+
+rad_haplotyper.pl -v  -p popmap -r reference.fasta -x 15 -mp 5 -g FinalAU_Haps.gen
+
+
+## Variant counts in the filtered SNP before bayescan 
+[etakyi@KITT Final]$ mawk '!/#/' SNP.AUdp5p05FHWE2A.recode.vcf  |wc
+   1840  115920 4918577
+
+## variant counts in neutral loci detected after bayescan
+(week8) [etakyi@KITT Final]$ mawk '!/#/' SNPAUdp.neutralonly.recode.vcf | wc
+   1840  115920 4918577
+## counts of outliers detected
+[etakyi@KITT Final]$ mawk '!/#/' SNPAUdp.outlieronly.recode.vcf |wc
+      0       0       0
+
