@@ -182,54 +182,52 @@ ls *sorted.dedup.rg.bam > sorted_dedup_rg_bams
 # create one more index for samtools for ref.euk.fa
 samtools faidx ref_euk.fa
 
-
 # call snps/indels from list of bam files. grand list of bams doesn't seem to work
 #freebayes -f ref_euk.fa -L sorted_dedup_rg_bams > total_snps.vcf
 
-#call snps/indels from merged bam, instead of list of bams
+# call snps/indels from merged bam, instead of list of bams
 freebayes -f ref_euk.fa merged.bam > total_snps.vcf
 
 # can't get parallel version of freebayes. fix for future use
 # freebayes-parallel <(~/freebayes/scripts/fasta_generate_regions.py ref.fa.fai 100000) 36 -f ref_euk.fa -L sorted_dedup_rg_bams > var.vcf
 
-#remove INDELS
+# remove INDELS
 vcftools --vcf total_snps.vcf --remove-indels --recode --recode-INFO-all --out total_snps
 
-#filter out genotypes found in fewer than 50% of individuals, minor allele count of 3, and lower quality scores
+# filter out genotypes found in fewer than 50% of individuals, minor allele count of 3, and lower quality scores
 vcftools --vcf total_snps.recode.vcf --max-missing 0.5 --mac 0.03 --minQ 20 --recode --recode-INFO-all --out raw.g5mac3
 
-#doesn't do much, this one
-#filter out loci with less than depth of 3
+# filter out loci with less than depth of 3
 vcftools --vcf raw.g5mac3.recode.vcf --minDP 3 --recode --recode-INFO-all --out raw.g5mac3dp3 
 
-#filter out individuals with lots of missing data
+# filter out individuals with lots of missing data
 ../filter_missing_ind.sh raw.g5mac3dp3.recode.vcf raw.g5mac3dplm
-
-#filter out loci with lots of missing data
+ 
+# filter out loci with lots of missing data
 vcftools --vcf raw.g5mac3dplm.recode.vcf --max-missing 0.95 --maf 0.05 --recode --recode-INFO-all --out DP3g95maf05 --min-meanDP 20
 
-#filter out loci where alleles frequency is very far from 0.5
+# filter out loci where alleles frequency is very far from 0.5
 vcffilter -s -f "AB > 0.20 & AB < 0.80 | AB < 0.01" DP3g95maf05.recode.vcf > DP3g95maf05.fil1.vcf
 
-#check current SNP count
+# check current SNP count
 mawk '!/#/' DP3g95maf05.fil1.vcf | wc -l
 
-#drop loci where quality is much greater than depth
+# drop loci where quality is much greater than depth
 vcffilter -f "QUAL / DP > 0.25" DP3g95maf05.fil1.vcf > DP3g95maf05.fil5.vcf
 
-#check current SNP count
+# check current SNP count
 mawk '!/#/' DP3g95maf05.fil5.vcf | wc -l
 
-#filter by HWE
+# filter by HWE
 vcfallelicprimitives DP3g95maf05.fil5.vcf --keep-info --keep-geno > DP3g95maf05.prim.vcf
 vcftools --vcf DP3g95maf05.prim.vcf --remove-indels --recode --recode-INFO-all --out SNP.DP3g95maf05
 #make sure the popmap has only the remaining individuals and their correct names here
 ./filter_hwe_by_pop.pl -v SNP.DP3g95maf05.recode.vcf -p popmap_wo_head -o SNP.DP3g95maf05.HWE -h 0.001
 
-#how many SNPs in final dataset?
+# how many SNPs in final dataset?
 mawk '!/#/' SNP.DP3g95maf05.HWE.recode.vcf | wc -l
 
-#rename final vcf file
+# rename final vcf file
 mv SNP.DP3g95maf05.HWE.recode.vcf SNP.DP3g95maf05.HWE.FINAL.vcf 
 ```
 
@@ -237,32 +235,26 @@ mv SNP.DP3g95maf05.HWE.recode.vcf SNP.DP3g95maf05.HWE.FINAL.vcf
 
 Bayescan to visualize putative outliers
 
-Some required files to place in your working directory
-
-- popmap
-- BSsnp.spid
-- plot_R.r
-
 ```
-#run PGDSpider
+# run PGDSpider
 java -jar /usr/local/bin/PGDSpider2-cli.jar -inputfile SNP.DP3g95maf05.HWE.FINAL.vcf -outputfile SNP.DP3g95maf05.HWE.FINAL_BS -spid ../BSsnp.spid
 
-#run BayeScan
+# run BayeScan
 BayeScan2.1_linux64bits SNP.DP3g95maf05.HWE.FINAL_BS -nbp 30 -thin 20
 
-#start R
+# start R
 R
 
-#load libraries
+# load libraries
 library(ggplot2)
 library(gridExtra)
 
-#input data, organize/rename a bit
+# input data, organize/rename a bit
 outliers <- read.csv("SNP.DP3g95maf05.HWE.FINA_fst.txt", header=TRUE, sep=" ")
 outliers <- outliers[,3:7]
 names(outliers) <- c("prob", "log10_PO", "qval", "alpha", "fst")
 
-#plot Bayescan results, Fst~Log10(PO)
+# plot Bayescan results, Fst~Log10(PO)
 p1 <- ggplot(outliers, aes(log10_PO, fst)) + 
         geom_point() +
        # theme_bw() +
@@ -273,56 +265,163 @@ p1
 ```
 ![BayeScan Outliers](Fst_Log10PO.jpeg)
 ```
-#export to jpeg; having problems with XQuartz; the following should work locally
+# export to jpeg; having problems with XQuartz; the following should work locally
 jpeg("Fst_Log10PO.jpeg")
 p1
 dev.off()
+
+#quit R
+quit()
 ```
+
 
 
 PCAdapt to visualize clustering by sampling locality
 ```
-#setwd
+#filter out loci with more than 2 alleles
+vcftools --vcf SNP.DP3g95maf05.HWE.recode.vcf --max-alleles 2 --recode --recode-INFO-all --out SNP.DP3g95maf05.HWE.2a
 
-#Load pcadapt library
+#start R
+
+#setwd; choose your own directory
+
+#Load libraries
 library(pcadapt)
 library(gridExtra)
 
 #load our VCF file into R
-filename <- read.pcadapt("DP3g95maf05.FINAL.recode.vcf", type = "vcf" )
+filename <- read.pcadapt("SNP.DP3g95maf05.HWE.2a.recode.vcf", type = "vcf" )
 
 #Create first PCA
 x <- pcadapt(input = filename, K = 20)
 
 #Plot the likelihoods
 plot(x, option = "screeplot")
-
+```
+![Scree plot](p_scree.jpeg)
+```
 #Create population designations
-poplist.names <- c("NB","NB","NB","SA","NB","SA","SA","SA","NB","SA","SA","NB","NB","SA","NB","NB","NB","SA","SA","SA","NB","NB","SA","SA","NB","NB","SA","SA","NB","NB","SA","SA","NB","NB","SA")
+#grab from poplist file using: awk -F '\t' '{print $2}' poplist
+poplist.names <- c("NB","NB","NB","NB","SA","SA","SA","SA","SA","SA","SA","SA","SA","SA","SA","SA","SA","SA","SA","SA","SA","NB","NB","NB","NB","NB","NB","NB","NB","NB","NB","NB","NB","NB","NB")
 
 #Plot the actual PCA (first two PCAs)
-plot(x, option = "scores", pop = poplist.names)
+p1 <- plot(x, option = "scores", i=1, j=2, pop=poplist.names)
 ```
-![PCA Axes 1 & 2](pcadapt_1X2.jpeg)
+![PCA Axes 1 & 2](p1.jpeg)
+```
+#Plot PCA with PCA 1 and PCA 3
+p2 <- plot(x, option = "scores", i=1, j=3, pop = poplist.names)
+```
+![PCA Axes 1 & 3](p2.jpeg)
 ```
 #Plot PCA with PCA 2 and PCA 3
-plot(x, option = "scores", i = 2, j = 3, pop = poplist.names)
+p3 <- plot(x, option = "scores", i=2, j=3, pop = poplist.names)
 ```
-![PCA Axes 2 & 3](pcadapt_2X3.jpeg)
+![PCA Axes 2 & 3](p3.jpeg)
 ```
-#Plot PCA with PCA 3 and PCA 4
-plot(x, option = "scores", i = 3, j = 4, pop = poplist.names)
+#Plot PCA with PCA 2 and PCA 4
+p4 <- plot(x, option = "scores", i=2, j=4, pop = poplist.names)
 ```
-![PCA Axes 3 & 4](pcadapt_3X4.jpeg)
+![PCA Axes 2 & 4](p4.jpeg)
 ```
-#this would normally work, but I think the ssh/XQuartz thing is acting up
-jpeg("pcadapt_1X2.jpeg")
-plot(x, option = "scores", pop = poplist.names)
-dev.off()
-jpeg("pcadapt_2X3.jpeg")
-plot(x, option = "scores", i = 2, j = 3, pop = poplist.names)
-dev.off()
-jpeg("pcadapt_3X4.jpeg")
-plot(x, option = "scores", i = 3, j = 4, pop = poplist.names)
-dev.off()
+
+#Start looking for outliers
+#Make Manhattan Plot
+plot(x , option = "manhattan")
+```
+![Manhattan Plot](p_manh1.jpeg)
+```
+#Make qqplot
+plot(x, option = "qqplot", threshold = 0.1)
+```
+![qq plot](p_qq1.jpeg)
+```
+# Look at P-value distribution
+plot(x, option = "stat.distribution")
+```
+![P-value distribution plot](p_pval1.jpeg)
+```
+
+# Set FDR
+library(qvalue)
+qval <- qvalue(x$pvalues)$qvalues
+alpha <- 0.05
+
+# Save outliers
+outliers <- which(qval < alpha)
+write.csv(outliers, "outliers.txt", row.names = FALSE)
+
+
+#quit R, save session
+quit()
+
+###remove outlier loci from vcf
+#split final vcf into header and body lines
+grep '^#' -v SNP.DP3g95maf05.HWE.2a.recode.vcf > final_body.vcf
+grep '^#' SNP.DP3g95maf05.HWE.2a.recode.vcf > final_head.vcf
+
+# remove header from outlier file
+sed -i '1d' outliers.txt
+
+#remove outlier lines from vcf body, save as neutralvcf body
+sed "$(sed 's/$/d/' outliers.txt)" final_body.vcf > neutralSNPs_body.vcf
+
+#add vcf header lines back, save as outlier_filtered, neutral vcf file
+cat final_head.vcf neutralSNPs_body.vcf > neutralSNPs.vcf
+
+
+#start R again
+R
+
+#try again with neutral filtered set
+filename <- read.pcadapt("neutralSNPs.vcf", type = "vcf" )
+
+#Create first PCA
+y <- pcadapt(input = filename, K = 20)
+
+#Plot the likelihoods
+plot(y, option = "screeplot")
+```
+![Scree plot](p_scree2.jpeg)
+```
+#Create population designations
+#grab from poplist file using: awk -F '\t' '{print $2}' poplist
+poplist.names <- c("NB","NB","NB","NB","SA","SA","SA","SA","SA","SA","SA","SA","SA","SA","SA","SA","SA","SA","SA","SA","SA","NB","NB","NB","NB","NB","NB","NB","NB","NB","NB","NB","NB","NB","NB")
+
+#Plot the actual PCA (first two PCAs)
+p5 <- plot(y, option = "scores", i=1, j=2, pop=poplist.names)
+```
+![PCA Axes 1 & 2](p5.jpeg)
+```
+#Plot PCA with PCA 1 and PCA 3
+p6 <- plot(y, option = "scores", i=1, j=3, pop = poplist.names)
+```
+![PCA Axes 1 & 3](p6.jpeg)
+```
+#Plot PCA with PCA 2 and PCA 3
+p7 <- plot(y, option = "scores", i=2, j=3, pop = poplist.names)
+```
+![PCA Axes 2 & 3](p7.jpeg)
+```
+#Plot PCA with PCA 2 and PCA 4
+p8 <- plot(y, option = "scores", i=2, j=4, pop = poplist.names)
+```
+![PCA Axes 2 & 4](p8.jpeg)
+```
+
+# post-outlier removal view
+#Make Manhattan Plot
+plot(y, option = "manhattan")
+```
+![Manhattan plot](p_manh2.jpeg)
+```
+#Make qqplot
+plot(y, option = "qqplot", threshold = 0.1)
+```
+![qq plot](p_qq2.jpeg)
+```
+# Look at P-value distribution
+plot(y, option = "stat.distribution")
+```
+![P-value distribution plot](p_pval2.jpeg)
 ```
