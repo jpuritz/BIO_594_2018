@@ -381,7 +381,8 @@ names(outliers) <- c("prob", "log10_PO", "qval", "alpha", "fst")
 # plot Bayescan results, Fst~Log10(PO)
 p1 <- ggplot(outliers, aes(log10_PO, fst)) + 
         geom_point() +
-       # theme_bw() +
+        scale_x_continuous(limits=c(-2,3)) +
+        #theme_bw() +
         xlab("Log10(PO)") +
         ylab("Fst")
 
@@ -397,6 +398,7 @@ dev.off()
 #quit R
 quit()
 ```
+
 
 
 
