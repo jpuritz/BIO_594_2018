@@ -343,7 +343,7 @@ mv SNP.DP3g95maf05.HWE.recode.vcf SNP.DP3g95maf05.HWE.FINAL.vcf
 ## Table 1. Number of SNPS and Isolates/Individuals after each filtering step
 
 | Step | Remaining Loci | Remaining Isolates |
-| ---------------- |:---------:| :------: |
+| :---------------- |:---------:| :------: |
 | Raw SNPs/INDELS | 712783 | 40 |
 | SNPs only | 420669 | 40 |
 | SNPs genotyped in > 50% of Isolates, minor allele count > 3, QUAL > 20 | 206671 | 40 |
@@ -387,7 +387,7 @@ p1 <- ggplot(outliers, aes(log10_PO, fst)) +
 
 p1
 ```
-![BayeScan Outliers](Fst_Log10PO.jpeg)
+![BayeScan Outliers](bayescan.png)
 ```
 # export to jpeg; having problems with XQuartz; the following should work locally
 jpeg("Fst_Log10PO.jpeg")
@@ -426,7 +426,7 @@ plot(x, option = "screeplot")
 ```
 #Create population designations
 #grab from poplist file using: awk -F '\t' '{print $2}' poplist
-poplist.names <- c("NB","NB","NB","NB","SA","SA","SA","SA","SA","SA","SA","SA","SA","SA","SA","SA","SA","SA","SA","SA","SA","NB","NB","NB","NB","NB","NB","NB","NB","NB","NB","NB","NB","NB","NB")
+poplist.names <- c("NB","NB","NB","SA","SA","SA","SA","SA","SA","SA","SA","SA","SA","SA","SA","SA","SA","SA","NB","NB","NB","NB","NB","NB","NB","NB","NB","NB")
 
 #Plot the actual PCA (first two PCAs)
 p1 <- plot(x, option = "scores", i=1, j=2, pop=poplist.names)
