@@ -164,6 +164,7 @@ Pre and Post-Trimming Examples of bp quality, via MultiQC
 
 Raw (untrimmed)
 ![Pre-trimming bp quality](RAW_bp_quality_all_samples.png)
+
 Trimmed
 ![Post-trimming bp quality](multiqc_trimmed_seq_qual_hist.png)
 
