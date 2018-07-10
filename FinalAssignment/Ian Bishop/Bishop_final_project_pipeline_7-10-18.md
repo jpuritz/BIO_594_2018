@@ -480,7 +480,11 @@ write.csv(outliers, "outliers.txt", row.names = FALSE)
 
 #quit R, save session
 quit()
+```
 
+Remove outliers and plot again
+
+```
 ###remove outlier loci from vcf
 #split final vcf into header and body lines
 grep '^#' -v SNP.DP3g95maf05.HWE.FINAL.vcf > final_body.vcf
