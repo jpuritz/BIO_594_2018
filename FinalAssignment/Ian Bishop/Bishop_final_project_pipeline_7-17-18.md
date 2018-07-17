@@ -18,7 +18,7 @@ ln -s ../data/raw_fastq/*fastq.gz .
 ```
 These files are required for the following pipeline (and found in this subdirectory):
 
-- popmap (a two column list of sampled individuals (as they are called in the VCF) and which population they belong to)
+- popmap_total: a tab-delimited txt file with two columns, one of libraries (e.g. lib21.bam, as they are called in vcf) and one of population (e.g "SA" or "NA")
 - BSsnp.spid
 - plot_R.r
 - merge_by_indiv.sh
@@ -192,55 +192,233 @@ bwa index ref_euk.fa
 
 # loop through R1 files, run bwa mem for all pairs, save as bam, sort bam
 # consider looping through unpaired R1/R2 fq files as well
-for i in `ls *R1_paired.fq.gz`; do
+for i in `ls *R1_paired.fq`; do
 	rsam=${i%R*}
+	libr=${i%%_*}
 	#align with bwa mem, convert to uncompressed BAM, removing unpaired and unmapped reads, then sorted and saved
 	#add '-f 0x02' if you want to exclude unpaired reads
-	bwa mem ref_euk.fa $i ${rsam}R2_paired.fq.gz -t 20 | samtools view -F 0x04 -@ 20 -Su - | samtools sort - > ${i}.bam
+	#add '-F 0x04' if you want to exclude unmapped reads
+	bwa mem ref_euk.fa $i ${rsam}R2_paired.fq -t 20 | samtools view -@ 20 -Su - | samtools sort - > ${libr}.sorted.allreads.bam
+	
+	#extract numbers only from flagstat command
+	mapped=`samtools flagstat ${libr}.sorted.allreads.bam | grep 'mapped (' | sed 's/\s.*//'`
+	total=`samtools flagstat ${libr}.sorted.allreads.bam | grep 'total' | sed 's/\s.*//'`
+	unmapped=`expr $total - $mapped`
+	proportion_mapped=`bc<<<"scale=2; $mapped / $total"`
+
+	#combine all three into one tab-delimited line with library name
+	echo "$libr"$'\t'"$mapped"$'\t'"$unmapped"$'\t'"$total"$'\t'"$proportion_mapped" >> tmp.txt
 done
 
+#add header to newly created mapping_output.txt file
+echo $'library\tmapped\tunmapped\ttotal\tproportion_mapped' | cat - tmp.txt  > mapping_output.txt
+rm tmp.txt
+```
 
-# loop to rename bams
-for i in `ls *.bam`; do
-	libr=${i%%_*}
-	mv $i ${libr}.bam	
-done
+
+## Plot Mapped Proportion by Library
+```
+#load R
+R
+
+library(ggplot2)
+library(reshape2)
+library(RColorBrewer)
+library(gridExtra)
+
+#import mapping data
+df <- read.table("test_mapped_prop_graph.txt", header=TRUE, stringsAsFactors = TRUE)
+#add unmapped_proportion variable
+df$unmapped_prop <- 1-df$proportion_mapped
+#remove non-proportion variables
+df2 <- df[,c(1,5,6)]
+#df8 and 9 route are same as df2/3/4 route but for absolate abundance, not relative proportion
+df8 <- df[,1:3]
+#rename variables
+names(df2) <- c("library", "mapped", "unmapped")
+#convert mapping proportion variables to long format from wide format
+df3 <- melt(df2, id.vars="library")
+df8 <- melt(df8, id.vars="library")
+#reorder library factor levels, so graph x axis is ordered by mapped proportion
+df3$library <- reorder(df3$library, df3$value, FUN=max)
+df8$library <- reorder(df8$library, df8$value, FUN=max)
+
+#import popmap (which libraries are assigned to each population)
+popmap <- read.table("test_popmap_all.txt", header=TRUE, stringsAsFactors = TRUE)
+#drop ".bam" part of popmap library strings
+popmap$library <- as.character(popmap$library)
+popmap$library = substr(popmap$library,1,nchar(popmap$library)-4)
+#merge popmap with df3 to add population variable to dataset
+df4 <- merge(df3, popmap)
+df9 <- merge(df8, popmap)
+
+#NB rel prop read graph
+p1 <- ggplot(subset(df4, population == "NB"), aes(x=library, y=value, fill=variable)) + 
+        geom_bar(stat="identity") + 
+        scale_fill_manual(values=c("#D55E00", "#0072B2")) + 
+        ggtitle("Narragansett Bay Isolates") +
+        ylab("Proportion") +
+        xlab("Library") +
+        guides(fill=guide_legend(title=NULL))
+        # theme(legend.position="bottom", 
+        #       legend.title = element_blank(), 
+        #       legend.text=element_text(size=8),
+        #       legend.key.size = unit(5, "mm"))
+
+#SA rel prop read graph
+p2 <- ggplot(subset(df4, population == "SA"), aes(x=library, y=value, fill=variable)) + 
+        geom_bar(stat="identity") + 
+        scale_fill_manual(values=c("#D55E00", "#0072B2")) + 
+        ylab("Proportion") +
+        xlab("Library") +
+        ggtitle("South African Isolates") +
+        guides(fill=guide_legend(title=NULL))
+
+#combine into single graphic; save as png, then photoshop/gimp to move one of legends into middle space and delete area right of graphs
+grid.arrange(p1, p2)
+```
+
+![Proportion of reads mapped](mapped_rel_prop.png)
+
+```
+#convert values to million unit
+df9$value <- df9$value/1000000
+
+#NB absolate read count graph
+p3 <- ggplot(subset(df9, population == "NB"), aes(x=library, y=value, fill=variable)) + 
+  geom_bar(stat="identity") + 
+  scale_fill_manual(values=c("#D55E00", "#0072B2")) + 
+  ggtitle("Narragansett Bay Isolates") +
+  ylab("Read abundance (millions)") +
+  ylim(c(0,8)) +
+  xlab("Library") +
+  guides(fill=guide_legend(title=NULL))
+# theme(legend.position="bottom", 
+#       legend.title = element_blank(), 
+#       legend.text=element_text(size=8),
+#       legend.key.size = unit(5, "mm"))
+
+#SA absolute read count graph
+p4 <- ggplot(subset(df9, population == "SA"), aes(x=library, y=value, fill=variable)) + 
+  geom_bar(stat="identity") + 
+  scale_fill_manual(values=c("#D55E00", "#0072B2")) + 
+  ylab("Read abundance (millions)") +
+  ylim(c(0,8)) +
+  xlab("Library") +
+  ggtitle("South African Isolates") +
+  guides(fill=guide_legend(title=NULL))
+
+#combine into single graphic; save as png, then photoshop/gimp to move one of legends into middle space and delete area right of graphs
+grid.arrange(p3, p4)
+```
+
+![Abundance of reads mapped](mapped_abs.png)
+
+
+## Remove unmapped reads, mark and delete duplicates
+```
+#remove unmapped reads
+for i in `ls *sorted.allreads.bam`; do
+	libr=${i%%.*}
+	samtools view -b -F 4 $i > ${libr}.sorted.bam
+	rm $i
+done	
+
+
 	
-	
-# loop to mark and delete duplicates with Picard
-for i in `ls *.bam`; do
+# loop to mark and delete duplicates with Picard; aggregate part of metrics file from each library into new file duplicate_readout.txt
+for i in `ls *.sorted.bam`; do
+	libr=${i%%.sorted.bam}
 	#marking and deleting duplicates
-	java -jar ../picard.jar MarkDuplicates \
+	java -jar picard.jar MarkDuplicates \
 	INPUT=${i} \
-	OUTPUT=dedup_${i} \
+	OUTPUT=${libr}.sorted.dedup.bam \
 	REMOVE_DUPLICATES=true \
 	METRICS_FILE=metrics.txt
+	cat -n metrics.txt | grep 'Unknown' >> tmp.txt
+	rm $i
 done
 
+#make a popmap_total_w_head
+echo $'library\tpopulation' | cat - popmap_total  > popmap_total_w_head
 
-# make list of sorted bams
-ls dedup_*.bam > sorted_dedup_bams
+#concatenate metrics.txt file header with duplicate info, then delete tmp files
+cat -n metrics.txt | grep 'LIBRARY' | cat - tmp.txt  > tmp2.txt
+sed -e "s/[[:space:]]\+/\t/g" tmp2.txt > tmp3.txt
+#add library column to duplicates_output.txt, rename
+paste -d' ' popmap_w_head tmp3.txt > duplicate_output.txt
+rm tmp.txt tmp2.txt tmp3.txt metrics.txt
+```
 
+## Plot percent of mapped reads duplicate
+```
+#Launch R
+R
 
+#import duplicate_output.txt
+dups <- read.table("test_output2.txt")
+#add lib column from rownames
+dups$library <- rownames(dups)
+
+#import popmap_total_w_head (which libraries are assigned to each population)
+popmap <- read.table("test_popmap_all.txt", header=TRUE, stringsAsFactors = TRUE)
+#cbind popmap with dups to add population variable to dataset; data MUST BE IN ORDER TO DO THIS STEP
+dups$population <- popmap$population
+#reorder libraries by percent duplication
+dups$library <- reorder(dups$library, dups$PERCENT_DUPLICATION, FUN=max)
+
+#import popmap (which libraries are assigned to each population)
+popmap <- read.table("test_popmap_all.txt", header=TRUE, stringsAsFactors = TRUE)
+#merge popmap with df3 to add population variable to dataset
+dups$population <- popmap$population
+
+dups$library <- as.character(dups$library)
+dups$library = substr(dups$library,1,nchar(dups$library)-4)
+dups$library <- reorder(dups$library, dups$PERCENT_DUPLICATION, FUN=max)
+
+#multiple by 100 to make proportion percent
+dups$PERCENT_DUPLICATION <- dups$PERCENT_DUPLICATION*100
+
+#assign plot duplication percention by library 
+p5 <- ggplot(dups, aes(x=PERCENT_DUPLICATION, y=library, colour=population)) + 
+  		geom_point(stat="identity") + 
+  		scale_colour_manual(values=c("#D55E00", "#0072B2")) +
+ 		  xlab("Duplication (%)") + 
+ 		  ylab("Library") +
+ 		  guides(fill=guide_legend(title=NULL)) + 
+		  theme(legend.key=element_blank(), 
+  	        legend.position = "bottom", 
+       	    legend.background = element_rect(fill = NA),
+            legend.direction = "horizontal")
+
+#call plot
+p5
+```
+
+![Percent of Duplicate Mapped Reads by Population](mapped_duplicate_percentage.png)
+
+```
+#exit R; save current environment
+exit()
+```
+
+## Add read group IDs, make list of final bam files
+```
 # add read group ids
-for i in `cat sorted_dedup_bams`; do
-	#libr=${i%%.dedup.bam};
-	tmp=${i#*_};
-	libr=${tmp%*.bam};
+for i in `ls *.sorted.dedup.bam`; do
+	libr=${i%%.sorted.dedup.bam};
 	bamaddrg -b $i > ${libr}.sorted.dedup.rg.bam;
 	rm $i
 done
 
-
-#merge bam files
-samtools merge merged.bam *rg.bam
-
-#index merged.bam
-samtools index merged.bam
-
-
-# make list of sorted, deduped, rg-tagged bams; not using currently
+# make list of sorted, deduped, rg-tagged bams
 ls *sorted.dedup.rg.bam > sorted_dedup_rg_bams
+
+#merge bam files; not using currently
+samtools merge merged.bam *sorted.dedup.rg.bam
+
+#index merged.bam; not using currently
+samtools index merged.bam
 ```
 
 
@@ -251,10 +429,10 @@ ls *sorted.dedup.rg.bam > sorted_dedup_rg_bams
 samtools faidx ref_euk.fa
 
 # call snps/indels from list of bam files. grand list of bams doesn't seem to work
-#freebayes -f ref_euk.fa -L sorted_dedup_rg_bams > total_snps.vcf
+freebayes -f ref_euk.fa -L sorted_dedup_rg_bams > total_snps.vcf
 
 # call snps/indels from merged bam, instead of list of bams
-freebayes -f ref_euk.fa merged.bam > total_snps.vcf
+#freebayes -f ref_euk.fa merged.bam > total_snps.vcf
 
 # can't get parallel version of freebayes. fix for future use
 # freebayes-parallel <(~/freebayes/scripts/fasta_generate_regions.py ref.fa.fai 100000) 36 -f ref_euk.fa -L sorted_dedup_rg_bams > var.vcf
@@ -338,6 +516,11 @@ mawk '!/#/' SNP.DP3g95maf05.HWE.recode.vcf | wc -l
 
 # rename final vcf file
 mv SNP.DP3g95maf05.HWE.recode.vcf SNP.DP3g95maf05.HWE.FINAL.vcf 
+
+#make popmap and popmap_wo_head files; be sure to have popmap_total file in directory
+grep '#CHROM' DP3g95maf05.fil5.vcf  | tr '\t' '\n' | sed '1,9 d' | sed 's/^dedup_//' > retained_libs
+join -1 1 -2 1 -a1 -e0 retained_libs popmap_total > popmap_wo_head
+echo -e 'Individual\tPopulation' | cat - popmap_wo_head > popmap
 ```
 
 ## Table 1. Number of SNPS and Isolates/Individuals after each filtering step
