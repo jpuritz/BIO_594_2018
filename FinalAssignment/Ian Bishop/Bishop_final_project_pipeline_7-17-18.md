@@ -278,7 +278,7 @@ p2 <- ggplot(subset(df4, population == "SA"), aes(x=library, y=value, fill=varia
 grid.arrange(p1, p2)
 ```
 
-![Proportion of reads mapped](mapped_rel_prop.png)
+![Proportion of reads mapped](mapped_prop.png)
 
 ```
 #convert values to million unit
